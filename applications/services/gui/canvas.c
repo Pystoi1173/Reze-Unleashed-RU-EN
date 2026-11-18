@@ -6,6 +6,8 @@
 #include <furi_hal.h>
 #include <stdint.h>
 #include <u8g2_glue.h>
+#include <locale/locale.h>
+#include <u8g2.h>
 
 const CanvasFontParameters canvas_font_params[FontTotalNumber] = {
     [FontPrimary] = {.leading_default = 12, .leading_min = 11, .height = 8, .descender = 2},
@@ -162,12 +164,9 @@ void canvas_invert_color(Canvas* canvas) {
 void canvas_set_font(Canvas* canvas, Font font) {
     furi_check(canvas);
     u8g2_SetFontMode(&canvas->fb, 1);
-    if(font == FontPrimary) {
-        u8g2_SetFont(&canvas->fb, u8g2_font_helvB08_tr);
-    } else if(font == FontSecondary) {
-        u8g2_SetFont(&canvas->fb, u8g2_font_haxrcorp4089_tr);
-    } else if(font == FontKeyboard) {
-        u8g2_SetFont(&canvas->fb, u8g2_font_profont11_mr);
+    if(font == FontPrimary || font == FontSecondary || font == FontKeyboard) {
+        // Оба языка должны отображать кириллицу в именах файлов и названиях.
+        u8g2_SetFont(&canvas->fb, u8g2_font_haxrcorp4089_t_cyrillic);
     } else if(font == FontBigNumbers) {
         u8g2_SetFont(&canvas->fb, u8g2_font_profont22_tn);
     } else if(font == FontBatteryPercent) {

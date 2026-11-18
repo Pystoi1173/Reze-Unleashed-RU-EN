@@ -3,6 +3,7 @@ App(
     name="U2F",
     apptype=FlipperAppType.MENUEXTERNAL,
     entry_point="u2f_app",
+    requires=["locale"],
     stack_size=2 * 1024,
     icon="A_U2F_14",
     order=80,

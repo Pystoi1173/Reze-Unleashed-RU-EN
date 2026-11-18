@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 // Set once a warning popup (cannot-write / still-trying) is shown, so later write-progress
 // events stop overwriting its message and layout.
@@ -55,7 +56,7 @@ static void lfrfid_scene_write_show_error(LfRfid* app, const char* text) {
     lfrfid_write_warning_shown = true;
 
     popup_set_icon(app->popup, 83, 22, &I_WarningDolphinFlip_45x42);
-    popup_set_header(app->popup, "Error", 64, 3, AlignCenter, AlignTop);
+    popup_set_header(app->popup, locale_translate("Error", "Ошибка"), 64, 3, AlignCenter, AlignTop);
     popup_set_text(app->popup, text, 3, 17, AlignLeft, AlignTop);
     notification_message(app->notifications, &sequence_blink_start_red);
 }
@@ -67,7 +68,7 @@ void lfrfid_scene_write_on_enter(void* context) {
     lfrfid_write_warning_shown = false;
 
     popup_set_icon(popup, 0, 8, &I_NFC_manual_60x50);
-    popup_set_header(popup, "Writing", 94, 1, AlignCenter, AlignTop);
+    popup_set_header(popup, locale_translate("Writing", "Запись"), 94, 1, AlignCenter, AlignTop);
 
     lfrfid_scene_write_set_status(app, NULL);
 
@@ -107,7 +108,7 @@ bool lfrfid_scene_write_on_event(void* context, SceneManagerEvent event) {
             scene_manager_next_scene(app->scene_manager, LfRfidSceneWriteSuccess);
             consumed = true;
         } else if(event.event == LfRfidEventWriteProtocolCannotBeWritten) {
-            lfrfid_scene_write_show_error(app, "This protocol\ncannot be written");
+            lfrfid_scene_write_show_error(app, locale_translate("This protocol\ncannot be written", "Этот протокол\nнельзя записать"));
             consumed = true;
         } else if(event.event == LfRfidEventWriteNoEnabledTarget) {
             // Same remedy either way, but naming the emptier case saves a puzzled trip to a
@@ -116,20 +117,22 @@ bool lfrfid_scene_write_on_event(void* context, SceneManagerEvent event) {
                 scene_manager_get_scene_state(app->scene_manager, LfRfidSceneWrite) == 0;
             lfrfid_scene_write_show_error(
                 app,
-                none_enabled ? "No write chips\nenabled. Enable\none in Settings" :
-                               "No enabled chip\ncan write this\nprotocol");
+                none_enabled ? locale_translate("No write chips\nenabled. Enable\none in Settings", "Нет чипов для записи\nВключите один\nв настройках") :
+                               locale_translate("No enabled chip\ncan write this\nprotocol", "Нет включённых чипов\nдля записи этого\nпротокола"));
             consumed = true;
         } else if(
             (event.event == LfRfidEventWriteFobCannotBeWritten) ||
             (event.event == LfRfidEventWriteTooLongToWrite)) {
             lfrfid_write_warning_shown = true;
             popup_set_icon(popup, 83, 22, &I_WarningDolphinFlip_45x42);
-            popup_set_header(popup, "Still Trying to Write...", 64, 0, AlignCenter, AlignTop);
+            popup_set_header(popup, locale_translate("Still Trying to Write...", "Попытка записи..."), 64, 0, AlignCenter, AlignTop);
             popup_set_text(
                 popup,
-                "Make sure this\n"
-                "card is writable\n"
-                "and not protected",
+                locale_translate(
+                    "Make sure this\n"
+                    "card is writable\n"
+                    "and not protected",
+                    "Убедитесь, что карта\nдоступна для записи\nи не защищена"),
                 0,
                 13,
                 AlignLeft,

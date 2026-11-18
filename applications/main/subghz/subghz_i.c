@@ -7,6 +7,7 @@
 #include <notification/notification_messages.h>
 #include <flipper_format/flipper_format.h>
 #include <flipper_format/flipper_format_i.h>
+#include <locale/locale.h>
 
 #define TAG "SubGhz"
 
@@ -54,7 +55,8 @@ bool subghz_tx_start(SubGhz* subghz, FlipperFormat* flipper_format) {
     switch(state) {
     case SubGhzTxRxStartTxStateErrorParserOthers:
         dialog_message_show_storage_error(
-            subghz->dialogs, "Error in protocol\nparameters\ndescription");
+            subghz->dialogs,
+            locale_translate("Error in protocol\nparameters\ndescription", "Ошибка в описании\nпараметров\nпротокола"));
         break;
     case SubGhzTxRxStartTxStateErrorOnlyRx:
         subghz_dialog_message_freq_error(subghz, true);
@@ -73,10 +75,11 @@ bool subghz_tx_start(SubGhz* subghz, FlipperFormat* flipper_format) {
 
 void subghz_dialog_message_no_memory(SubGhz* subghz) {
     DialogMessage* message = dialog_message_alloc();
-    dialog_message_set_header(message, "Not enough memory", 63, 3, AlignCenter, AlignTop);
+    dialog_message_set_header(
+        message, locale_translate("Not enough memory", "Недостаточно памяти"), 63, 3, AlignCenter, AlignTop);
     dialog_message_set_text(
         message,
-        "Signal can only\nbe saved.\nDelete old signals\nto send it.",
+        locale_translate("Signal can only\nbe saved.\nDelete old signals\nto send it.", "Сигнал можно только\nсохранить.\nУдалите старые сигналы,\nчтобы отправить его."),
         0,
         17,
         AlignLeft,
@@ -89,12 +92,12 @@ void subghz_dialog_message_no_memory(SubGhz* subghz) {
 void subghz_dialog_message_freq_error(SubGhz* subghz, bool only_rx) {
     DialogsApp* dialogs = subghz->dialogs;
     DialogMessage* message = dialog_message_alloc();
-    const char* header_text = "Frequency not supported";
-    const char* message_text = "Frequency\nis outside of\nsupported range.";
+    const char* header_text = locale_translate("Frequency not supported", "Частота не поддерживается");
+    const char* message_text = locale_translate("Frequency\nis outside of\nsupported range.", "Частота\nвне\nдопустимого диапазона.");
 
     if(only_rx) {
-        header_text = "Transmission is blocked";
-        message_text = "Frequency\nis outside of\ndefault range.\nCheck docs.";
+        header_text = locale_translate("Transmission is blocked", "Передача заблокирована");
+        message_text = locale_translate("Frequency\nis outside of\ndefault range.\nCheck docs.", "Частота\nвне\nстандартного диапазона.\nСм. документацию.");
     }
 
     dialog_message_set_header(message, header_text, 63, 3, AlignCenter, AlignTop);
@@ -251,7 +254,8 @@ bool subghz_key_load(SubGhz* subghz, const char* file_path, bool show_dialog) {
     case SubGhzLoadKeyStateProtocolDescriptionErr:
         if(show_dialog) {
             dialog_message_show_storage_error(
-                subghz->dialogs, "Error in protocol\nparameters\ndescription");
+                subghz->dialogs,
+            locale_translate("Error in protocol\nparameters\ndescription", "Ошибка в описании\nпараметров\nпротокола"));
         }
         return false;
 

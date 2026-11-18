@@ -1,6 +1,38 @@
 #include "locale.h"
 
+#include <toolbox/saved_struct.h>
+#include <storage/storage.h>
+
 #define TAG "LocaleSrv"
+#define LOCALE_SETTINGS_PATH INT_PATH(".locale.settings")
+#define LOCALE_SETTINGS_MAGIC 0x4C
+#define LOCALE_SETTINGS_VERSION 1
+
+static LocaleLanguage locale_language = LocaleLanguageRussian;
+
+LocaleLanguage locale_get_language(void) {
+    return locale_language;
+}
+
+void locale_set_language(LocaleLanguage language) {
+    if(language != LocaleLanguageRussian && language != LocaleLanguageEnglish) return;
+
+    locale_language = language;
+    const uint8_t value = language;
+    if(!saved_struct_save(
+           LOCALE_SETTINGS_PATH,
+           &value,
+           sizeof(value),
+           LOCALE_SETTINGS_MAGIC,
+           LOCALE_SETTINGS_VERSION)) {
+        FURI_LOG_W(TAG, "Language setting was not saved");
+    }
+}
+
+const char* locale_translate(const char* english, const char* russian) {
+    return (locale_get_language() == LocaleLanguageRussian && russian) ? russian : english;
+}
+
 
 LocaleMeasurementUnits locale_get_measurement_unit(void) {
     return (LocaleMeasurementUnits)furi_hal_rtc_get_locale_units();
@@ -45,8 +77,8 @@ void locale_format_time(
     uint8_t hours = datetime->hour;
     uint8_t am_pm = 0;
     if(format == LocaleTimeFormat12h) {
-        if(hours > 12) {
-            hours -= 12;
+        if(hours >= 12) {
+            if(hours > 12) hours -= 12;
             am_pm = 2;
         } else {
             am_pm = 1;
@@ -108,5 +140,16 @@ void locale_format_date(
 
 int32_t locale_on_system_start(void* p) {
     UNUSED(p);
+    // Хук вызывается загрузчиком после запуска служб; открытие записи ожидает хранилище.
+    uint8_t value = LocaleLanguageRussian;
+    if(saved_struct_load(
+           LOCALE_SETTINGS_PATH,
+           &value,
+           sizeof(value),
+           LOCALE_SETTINGS_MAGIC,
+           LOCALE_SETTINGS_VERSION) &&
+       value <= LocaleLanguageEnglish) {
+        locale_language = (LocaleLanguage)value;
+    }
     return 0;
 }

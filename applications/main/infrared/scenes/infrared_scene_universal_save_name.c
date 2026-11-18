@@ -1,6 +1,7 @@
 #include "../infrared_app_i.h"
 
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 void infrared_scene_universal_save_name_on_enter(void* context) {
     InfraredApp* infrared = context;
@@ -13,7 +14,7 @@ void infrared_scene_universal_save_name_on_enter(void* context) {
     infrared_text_store_set(infrared, 0, "%s", furi_string_get_cstr(remote_name));
     furi_string_free(remote_name);
 
-    text_input_set_header_text(text_input, "Name the remote");
+    text_input_set_header_text(text_input, locale_translate("Name the remote", "Имя пульта"));
     text_input_set_result_callback(
         text_input,
         infrared_text_input_callback,

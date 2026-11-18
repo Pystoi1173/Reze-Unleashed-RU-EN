@@ -1,5 +1,6 @@
 #include "../nfc_app_i.h"
 #include "../helpers/protocol_support/nfc_protocol_support_gui_common.h"
+#include <locale/locale.h>
 
 static uint32_t nfc_scene_key_dict_count(const char* path, KeysDictMode mode, size_t key_size) {
     KeysDict* dict = keys_dict_alloc(path, mode, key_size);
@@ -25,7 +26,7 @@ void nfc_scene_key_dict_on_enter(void* context) {
     FuriString* temp_str = furi_string_alloc();
     widget_add_string_element(
         instance->widget, 0, 0, AlignLeft, AlignTop, FontPrimary, dict->title);
-    furi_string_printf(temp_str, "System dict: %lu", system_keys_total);
+    furi_string_printf(temp_str, locale_translate("System dict: %lu", "Системный словарь: %lu"), system_keys_total);
     widget_add_string_element(
         instance->widget,
         0,
@@ -34,7 +35,7 @@ void nfc_scene_key_dict_on_enter(void* context) {
         AlignTop,
         FontSecondary,
         furi_string_get_cstr(temp_str));
-    furi_string_printf(temp_str, "User dict: %lu", user_keys_total);
+    furi_string_printf(temp_str, locale_translate("User dict: %lu", "Пользовательский словарь: %lu"), user_keys_total);
     widget_add_string_element(
         instance->widget,
         0,
@@ -47,14 +48,14 @@ void nfc_scene_key_dict_on_enter(void* context) {
     widget_add_button_element(
         instance->widget,
         GuiButtonTypeCenter,
-        "Add",
+        locale_translate("Add", "Добавить"),
         nfc_protocol_support_common_widget_callback,
         instance);
     if(user_keys_total > 0) {
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeRight,
-            "List",
+            locale_translate("List", "Список"),
             nfc_protocol_support_common_widget_callback,
             instance);
     }

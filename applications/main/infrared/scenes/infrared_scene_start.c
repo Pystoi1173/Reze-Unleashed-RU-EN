@@ -1,4 +1,5 @@
 #include "../infrared_app_i.h"
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexUniversalRemotes,
@@ -21,25 +22,25 @@ void infrared_scene_start_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "Universal Remotes",
+        locale_translate("Universal Remotes", "Универсальные пульты"),
         SubmenuIndexUniversalRemotes,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "Learn New Remote",
+        locale_translate("Learn New Remote", "Новый пульт"),
         SubmenuIndexLearnNewRemote,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "Saved Remotes",
+        locale_translate("Saved Remotes", "Сохранённые пульты"),
         SubmenuIndexSavedRemotes,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "GPIO Settings",
+        locale_translate("GPIO Settings", "Настройки GPIO"),
         SubmenuIndexGpioSettings,
         infrared_scene_start_submenu_callback,
         infrared);
@@ -47,13 +48,13 @@ void infrared_scene_start_on_enter(void* context) {
     if(infrared->app_state.is_debug_enabled) {
         submenu_add_item(
             submenu,
-            "Learn New Remote RAW",
+            locale_translate("Learn New Remote RAW", "Новый пульт RAW"),
             SubmenuIndexLearnNewRemoteRaw,
             infrared_scene_start_submenu_callback,
             infrared);
         submenu_add_item(
             submenu,
-            "Debug RX",
+            locale_translate("Debug RX", "Отладка RX"),
             SubmenuIndexDebug,
             infrared_scene_start_submenu_callback,
             infrared);

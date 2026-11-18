@@ -5,6 +5,7 @@
 #include "archive/views/archive_browser_view.h"
 #include "toolbox/path.h"
 #include <dialogs/dialogs.h>
+#include <locale/locale.h>
 
 #define TAG "Archive"
 
@@ -38,14 +39,14 @@ void archive_scene_rename_on_enter(void* context) {
         // Extract folder name and copy into text_store
         path_extract_basename(furi_string_get_cstr(current_path), path_name);
         strlcpy(archive->text_store, furi_string_get_cstr(path_name), MAX_NAME_LEN);
-        text_input_set_header_text(text_input, "Rename directory:");
+        text_input_set_header_text(text_input, locale_translate("Rename directory:", "Переименовать папку:"));
     } else /*if(current->type != ArchiveFileTypeUnknown) */ {
         // Extract file name and copy into text_store
         path_extract_filename(current_path, path_name, true);
         strlcpy(archive->text_store, furi_string_get_cstr(path_name), MAX_NAME_LEN);
         // Extract file extension for validator and rename func
         path_extract_extension(current_path, archive->file_extension, MAX_EXT_LEN);
-        text_input_set_header_text(text_input, "Rename file:");
+        text_input_set_header_text(text_input, locale_translate("Rename file:", "Переименовать файл:"));
     } /*else {
         path_extract_filename(current->path, path_name, false);
         strlcpy(archive->text_store, furi_string_get_cstr(path_name), MAX_NAME_LEN);
@@ -121,7 +122,8 @@ bool archive_scene_rename_on_event(void* context, SceneManagerEvent event) {
             } else {
                 FuriString* dialog_msg;
                 dialog_msg = furi_string_alloc();
-                furi_string_cat_printf(dialog_msg, "Cannot rename\nCode: %d", error);
+                furi_string_cat_printf(
+                    dialog_msg, locale_translate("Cannot rename\nCode: %d", "Не удалось переименовать\nКод: %d"), error);
                 dialog_message_show_storage_error(
                     archive->dialogs, furi_string_get_cstr(dialog_msg));
                 furi_string_free(dialog_msg);

@@ -1,5 +1,6 @@
 #include "../subghz_i.h"
 #include "../helpers/subghz_custom_event.h"
+#include <locale/locale.h>
 
 void subghz_scene_need_saving_callback(GuiButtonType result, InputType type, void* context) {
     furi_assert(context);
@@ -16,7 +17,13 @@ void subghz_scene_need_saving_on_enter(void* context) {
     SubGhz* subghz = context;
 
     widget_add_string_multiline_element(
-        subghz->widget, 64, 13, AlignCenter, AlignCenter, FontPrimary, "Exit to Sub-GHz Menu?");
+        subghz->widget,
+        64,
+        13,
+        AlignCenter,
+        AlignCenter,
+        FontPrimary,
+        locale_translate("Exit to Sub-GHz Menu?", "В меню Sub-GHz?"));
     widget_add_string_multiline_element(
         subghz->widget,
         64,
@@ -24,12 +31,12 @@ void subghz_scene_need_saving_on_enter(void* context) {
         AlignCenter,
         AlignCenter,
         FontSecondary,
-        "All unsaved data\nwill be lost!");
+        locale_translate("All unsaved data\nwill be lost!", "Несохранённые данные\nбудут потеряны!"));
 
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeRight, "Stay", subghz_scene_need_saving_callback, subghz);
+        subghz->widget, GuiButtonTypeRight, locale_translate("Stay", "Остаться"), subghz_scene_need_saving_callback, subghz);
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeLeft, "Exit", subghz_scene_need_saving_callback, subghz);
+        subghz->widget, GuiButtonTypeLeft, locale_translate("Exit", "Выйти"), subghz_scene_need_saving_callback, subghz);
 
     view_dispatcher_switch_to_view(subghz->view_dispatcher, SubGhzViewIdWidget);
 }

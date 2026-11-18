@@ -1,5 +1,6 @@
 #include "../ibutton_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexEmulate,
@@ -18,26 +19,39 @@ void ibutton_scene_saved_key_menu_on_enter(void* context) {
     const uint32_t features = ibutton_protocols_get_features(
         ibutton->protocols, ibutton_key_get_protocol_id(ibutton->key));
 
-    submenu_add_item(submenu, "Emulate", SubmenuIndexEmulate, ibutton_submenu_callback, ibutton);
+    submenu_add_item(
+        submenu,
+        locale_translate("Emulate", "Эмулировать"),
+        SubmenuIndexEmulate,
+        ibutton_submenu_callback,
+        ibutton);
 
     if(features & iButtonProtocolFeatureWriteId) {
         submenu_add_item(
-            submenu, "Write ID", SubmenuIndexWriteId, ibutton_submenu_callback, ibutton);
+            submenu,
+            locale_translate("Write ID", "Записать ID"),
+            SubmenuIndexWriteId,
+            ibutton_submenu_callback,
+            ibutton);
     }
 
     if(features & iButtonProtocolFeatureWriteCopy) {
         submenu_add_item(
             submenu,
-            "Full Write on Same Type",
+            locale_translate("Full Write on Same Type", "Полная запись того же типа"),
             SubmenuIndexWriteCopy,
             ibutton_submenu_callback,
             ibutton);
     }
 
-    submenu_add_item(submenu, "Edit", SubmenuIndexEdit, ibutton_submenu_callback, ibutton);
-    submenu_add_item(submenu, "Rename", SubmenuIndexRename, ibutton_submenu_callback, ibutton);
-    submenu_add_item(submenu, "Delete", SubmenuIndexDelete, ibutton_submenu_callback, ibutton);
-    submenu_add_item(submenu, "Info", SubmenuIndexInfo, ibutton_submenu_callback, ibutton);
+    submenu_add_item(
+        submenu, locale_translate("Edit", "Изменить"), SubmenuIndexEdit, ibutton_submenu_callback, ibutton);
+    submenu_add_item(
+        submenu, locale_translate("Rename", "Переименовать"), SubmenuIndexRename, ibutton_submenu_callback, ibutton);
+    submenu_add_item(
+        submenu, locale_translate("Delete", "Удалить"), SubmenuIndexDelete, ibutton_submenu_callback, ibutton);
+    submenu_add_item(
+        submenu, locale_translate("Info", "Информация"), SubmenuIndexInfo, ibutton_submenu_callback, ibutton);
 
     submenu_set_selected_item(
         submenu, scene_manager_get_scene_state(ibutton->scene_manager, iButtonSceneSavedKeyMenu));

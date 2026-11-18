@@ -34,6 +34,7 @@ ENV.AppendUnique(
         "-Wa,-gdwarf-sections",
         "-fsingle-precision-constant",
         "-fno-math-errno",
+        "-fmerge-all-constants",
         # Generates .su files with stack usage information
         # "-fstack-usage",
         "-g",

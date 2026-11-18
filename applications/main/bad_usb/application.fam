@@ -3,6 +3,7 @@ App(
     name="Bad USB",
     apptype=FlipperAppType.MENUEXTERNAL,
     entry_point="bad_usb_app",
+    requires=["locale"],
     stack_size=2 * 1024,
     icon="A_BadUsb_14",
     order=70,

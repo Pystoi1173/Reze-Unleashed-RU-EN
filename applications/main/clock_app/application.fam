@@ -3,6 +3,7 @@ App(
     name="Clock",
     apptype=FlipperAppType.MENUEXTERNAL,
     entry_point="clock_app",
+    requires=["locale"],
     icon="A_Clock_14",
     stack_size=2 * 1024,
     order=81,

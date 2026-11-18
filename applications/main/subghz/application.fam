@@ -9,6 +9,7 @@ App(
         "gui",
         "cli",
         "dialogs",
+        "locale",
     ],
     provides=[
         "subghz_load_dangerous_settings",

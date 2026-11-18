@@ -45,6 +45,11 @@ null.d
 .sconsign.dblite
 
 
+# Local device data and installation records
+/backup/
+/INSTALL_STATUS.md
+/RU_CHANGED_FILES.txt
+
 # bundle output
 /dist
 /artifacts-default

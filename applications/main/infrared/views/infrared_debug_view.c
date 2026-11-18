@@ -2,6 +2,7 @@
 
 #include <gui/canvas.h>
 #include <gui/elements.h>
+#include <locale/locale.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +22,13 @@ static void infrared_debug_view_draw_callback(Canvas* canvas, void* model) {
 
     canvas_clear(canvas);
     canvas_set_font(canvas, FontPrimary);
-    elements_multiline_text_aligned(canvas, 64, 0, AlignCenter, AlignTop, "INFRARED monitor\n");
+    elements_multiline_text_aligned(
+        canvas,
+        64,
+        0,
+        AlignCenter,
+        AlignTop,
+        locale_translate("INFRARED monitor\n", "Монитор ИК\n"));
     canvas_set_font(canvas, FontKeyboard);
 
     if(strlen(debug_view_model->text)) {

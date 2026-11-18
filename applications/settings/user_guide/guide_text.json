@@ -1,0 +1,170 @@
+[
+  {
+    "title_en": "Sub-GHz",
+    "title_ru": "Sub-GHz",
+    "pages_en": [
+      "Select Read and scan\nyour test device.",
+      "Save only an owned\nsignal. Check region\nand power limits.",
+      "Choose Write or Send\nonly with permission."
+    ],
+    "pages_ru": [
+      "Выберите Чтение и\nсканируйте свой тест.",
+      "Сохраняйте только\nсвой сигнал. Проверьте\nрегион и мощность.",
+      "Запись или Передача —\nтолько с разрешения."
+    ]
+  },
+  {
+    "title_en": "NFC",
+    "title_ru": "NFC",
+    "pages_en": [
+      "Place the card at the\nback of the Flipper.",
+      "Use Read or Write with\nyour own test tag.",
+      "Emulate only a tag you\nown and may test."
+    ],
+    "pages_ru": [
+      "Приложите карту к\nзадней стороне Flipper.",
+      "Выберите Чтение или\nЗапись для своей метки.",
+      "Эмулируйте только\nсвою тестовую метку."
+    ]
+  },
+  {
+    "title_en": "RFID 125 kHz",
+    "title_ru": "RFID 125 кГц",
+    "pages_en": [
+      "Open Read and hold\nyour LF test tag near\nthe antenna.",
+      "Save a read only for\nyour own test setup.",
+      "Emulate only your own\ncompatible test tag."
+    ],
+    "pages_ru": [
+      "Откройте Чтение и\nподнесите LF-метку\nк антенне.",
+      "Сохраняйте данные\nтолько для своего\nтестового стенда.",
+      "Эмулируйте только\nсвою совместимую\nтестовую метку."
+    ]
+  },
+  {
+    "title_en": "iButton",
+    "title_ru": "iButton",
+    "pages_en": [
+      "Open Read and touch\nyour owned key.",
+      "Save the key only with\nowner permission.",
+      "Use Emulate only with\nyour own test lock."
+    ],
+    "pages_ru": [
+      "Откройте Чтение и\nкоснитесь своим ключом.",
+      "Сохраняйте ключ только\nс разрешения владельца.",
+      "Эмуляция — только\nсо своим тестовым замком."
+    ]
+  },
+  {
+    "title_en": "Infrared",
+    "title_ru": "Инфракрасный",
+    "pages_en": [
+      "Point the IR port at\nyour own receiver.",
+      "Use Learn, then Save\nthe remote button.",
+      "Open Send to test the\nsaved button."
+    ],
+    "pages_ru": [
+      "Направьте ИК-порт\nна свой приёмник.",
+      "Выберите Обучение,\nсохраните кнопку.",
+      "Откройте Передача и\nпроверьте свою кнопку."
+    ]
+  },
+  {
+    "title_en": "GPIO",
+    "title_ru": "GPIO",
+    "pages_en": [
+      "Check voltage and pins\nbefore connecting.",
+      "Select the needed pin\nmode for your test.",
+      "Read signals only from\nyour safe test circuit."
+    ],
+    "pages_ru": [
+      "Проверьте напряжение\nи выводы до подключения.",
+      "Выберите режим вывода\nдля своего теста.",
+      "Считывайте сигналы\nтолько с безопасной\nсхемы."
+    ]
+  },
+  {
+    "title_en": "BadUSB",
+    "title_ru": "BadUSB",
+    "pages_en": [
+      "Open a script from SD\nfor your own computer.",
+      "Review every line before\nusing Run.",
+      "Stop it with Back; never\ntest on someone else's data."
+    ],
+    "pages_ru": [
+      "Откройте скрипт с SD\nдля своего компьютера.",
+      "Проверьте каждую строку\nперед запуском.",
+      "Остановите кнопкой\nНазад; не трогайте\nчужие данные."
+    ]
+  },
+  {
+    "title_en": "U2F",
+    "title_ru": "U2F",
+    "pages_en": [
+      "Open U2F and choose\nRegister on a test site.",
+      "Touch the key when\nthe site requests it.",
+      "Keep a backup sign-in\nmethod for your account."
+    ],
+    "pages_ru": [
+      "Откройте U2F и выберите\nРегистрация на тестовом\nсайте.",
+      "Коснитесь ключа по\nзапросу сайта.",
+      "Сохраните запасной\nспособ входа."
+    ]
+  },
+  {
+    "title_en": "Archive",
+    "title_ru": "Архив",
+    "pages_en": [
+      "Use Up and Down to\nselect a file or folder.",
+      "Press OK to open; use\nBack to return.",
+      "Copy or delete only\nfiles you own."
+    ],
+    "pages_ru": [
+      "Вверх и вниз — выбор\nфайла или папки.",
+      "OK — открыть; Назад —\nвернуться.",
+      "Копируйте и удаляйте\nтолько свои файлы."
+    ]
+  },
+  {
+    "title_en": "BT Remote",
+    "title_ru": "BT Remote",
+    "pages_en": [
+      "Pair only with your own\ncompatible device.",
+      "Check the device name\nbefore connecting.",
+      "Use buttons as a remote\nonly with permission."
+    ],
+    "pages_ru": [
+      "Сопрягайте только\nсвоё совместимое\nустройство.",
+      "Проверьте имя устройства\nперед подключением.",
+      "Используйте пульт\nтолько с разрешения."
+    ]
+  },
+  {
+    "title_en": "Settings",
+    "title_ru": "Настройки",
+    "pages_en": [
+      "Short OK selects an item.\nUp and Down move.",
+      "Back cancels or returns.\nRead the value shown.",
+      "Long OK is not needed\nfor normal controls."
+    ],
+    "pages_ru": [
+      "Короткий OK выбирает.\nВверх и вниз — переход.",
+      "Назад отменяет или\nвозвращает. Смотрите\nзначение на экране.",
+      "Долгое OK не нужно\nдля обычных пунктов."
+    ]
+  },
+  {
+    "title_en": "Safety",
+    "title_ru": "Важно",
+    "pages_en": [
+      "Features depend on the\nmodel and region.",
+      "Use authorized devices\nand your own test data.",
+      "Follow local law and\nstop if unsure."
+    ],
+    "pages_ru": [
+      "Возможности зависят\nот модели и региона.",
+      "Используйте свои\nустройства и тестовые\nданные.",
+      "Соблюдайте закон и\nостановитесь при сомнении."
+    ]
+  }
+]

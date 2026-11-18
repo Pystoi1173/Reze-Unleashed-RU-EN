@@ -1,6 +1,7 @@
 #include "../nfc_app_i.h"
 
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 #define TAG "NfcKeyDictImport"
 
@@ -13,10 +14,10 @@ static void
         // many, or a partial save is indistinguishable from nothing having happened at all.
         notification_message(instance->notifications, &sequence_error);
         popup_set_icon(popup, 83, 22, &I_WarningDolphinFlip_45x42);
-        popup_set_header(popup, "Save Failed", 64, 3, AlignCenter, AlignTop);
+        popup_set_header(popup, locale_translate("Save Failed", "Ошибка сохранения"), 64, 3, AlignCenter, AlignTop);
         nfc_text_store_set(
             instance,
-            "Saved %u of %u\nSD card full\nor read-only",
+            locale_translate("Saved %u of %u\nSD card full\nor read-only", "Сохранено %u из %u\nSD-карта заполнена\nили только для чтения"),
             (unsigned)stats->added,
             (unsigned)(stats->candidates - stats->known));
     } else {
@@ -24,14 +25,14 @@ static void
         // worth carrying in a dictionary every future attack has to walk.
         popup_set_header(
             popup,
-            stats->added > 0 ? "Keys Saved" : "Nothing to Add",
+            stats->added > 0 ? locale_translate("Keys Saved", "Ключи сохранены") : locale_translate("Nothing to Add", "Нечего добавлять"),
             64,
             3,
             AlignCenter,
             AlignTop);
         nfc_text_store_set(
             instance,
-            "New keys: %u\nAlready known: %u",
+            locale_translate("New keys: %u\nAlready known: %u", "Новых ключей: %u\nУже известны: %u"),
             (unsigned)stats->added,
             (unsigned)stats->known);
     }
@@ -47,7 +48,7 @@ void nfc_scene_key_dict_import_on_enter(void* context) {
     // Both dictionaries are read in full, and keys_dict_alloc() walks each one once more just to
     // count - the Classic system dictionary alone is 4,082 keys over ~67 KB, read twice. Put the
     // animated view up first so the wait is not a frozen copy of the menu we came from.
-    nfc_show_loading_label_popup(instance, "Saving keys to\nuser dictionary", true);
+    nfc_show_loading_label_popup(instance, locale_translate("Saving keys to\nuser dictionary", "Сохранение ключей\nв словарь пользователя"), true);
 
     uint8_t* keys = malloc(NFC_KEY_DICT_DEVICE_KEYS_MAX * dict->key_size);
     const size_t key_count = nfc_key_dict_collect_from_device(

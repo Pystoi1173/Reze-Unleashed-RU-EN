@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexReadCardType,
@@ -22,43 +23,43 @@ void nfc_scene_extra_actions_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "Read Specific Card Type",
+        locale_translate("Read Specific Card Type", "Читать тип карты"),
         SubmenuIndexReadCardType,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "MIFARE Classic Keys",
+        locale_translate("MIFARE Classic Keys", "Ключи MIFARE Classic"),
         SubmenuIndexMfClassicKeys,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "MIFARE Plus Keys",
+        locale_translate("MIFARE Plus Keys", "Ключи MIFARE Plus"),
         SubmenuIndexMfPlusKeys,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "MIFARE Ultralight C Keys",
+        locale_translate("MIFARE Ultralight C Keys", "Ключи MIFARE Ultralight C"),
         SubmenuIndexMfUltralightCKeys,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "MIFARE UL AES Keys",
+        locale_translate("MIFARE UL AES Keys", "AES-ключи MIFARE UL"),
         SubmenuIndexMfUltralightAesKeys,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "Unlock NTAG/Ultralight",
+        locale_translate("Unlock NTAG/Ultralight", "Разблокировать NTAG/Ultralight"),
         SubmenuIndexMfUltralightUnlock,
         nfc_scene_extra_actions_submenu_callback,
         instance);
     submenu_add_item(
         submenu,
-        "Unlock SLIX-L",
+        locale_translate("Unlock SLIX-L", "Разблокировать SLIX-L"),
         SubmenuIndexSlixUnlock,
         nfc_scene_extra_actions_submenu_callback,
         instance);

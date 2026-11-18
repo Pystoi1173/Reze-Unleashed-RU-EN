@@ -7,6 +7,7 @@ App(
     icon="A_NFC_14",
     stack_size=5 * 1024,
     order=30,
+    requires=["locale"],
     resources="resources",
     # Source exclusions are matched against directory/file names, not paths, so name the leaf
     # directly. Unrelated to fap_exclude_libs below, which is about toolchain libraries.

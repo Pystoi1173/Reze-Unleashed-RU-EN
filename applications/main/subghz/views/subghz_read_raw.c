@@ -5,6 +5,7 @@
 #include <furi_hal.h>
 #include <input/input.h>
 #include <gui/elements.h>
+#include <locale/locale.h>
 
 #include <assets_icons.h>
 #define SUBGHZ_READ_RAW_RSSI_HISTORY_SIZE 100
@@ -316,16 +317,16 @@ void subghz_read_raw_draw(Canvas* canvas, SubGhzReadRAWModel* model) {
 
     switch(model->status) {
     case SubGhzReadRAWStatusIDLE:
-        elements_button_left(canvas, "Erase");
-        elements_button_center(canvas, "Send");
-        elements_button_right(canvas, "Save");
+        elements_button_left(canvas, locale_translate("Erase", "Стереть"));
+        elements_button_center(canvas, locale_translate("Send", "Отправить"));
+        elements_button_right(canvas, locale_translate("Save", "Сохранить"));
         break;
     case SubGhzReadRAWStatusLoadKeyIDLE:
         if(!model->raw_send_only) {
-            elements_button_left(canvas, "New");
-            elements_button_right(canvas, "More");
+            elements_button_left(canvas, locale_translate("New", "Новый"));
+            elements_button_right(canvas, locale_translate("More", "Ещё"));
         }
-        elements_button_center(canvas, "Send");
+        elements_button_center(canvas, locale_translate("Send", "Отправить"));
         elements_text_box(
             canvas,
             4,
@@ -343,16 +344,16 @@ void subghz_read_raw_draw(Canvas* canvas, SubGhzReadRAWModel* model) {
     case SubGhzReadRAWStatusLoadKeyTX:
     case SubGhzReadRAWStatusLoadKeyTXRepeat:
         graphics_mode = 0;
-        elements_button_center(canvas, "Hold to repeat");
+        elements_button_center(canvas, locale_translate("Hold to repeat", "Удерживайте для повтора"));
         break;
 
     case SubGhzReadRAWStatusStart:
-        elements_button_left(canvas, "Config");
-        elements_button_center(canvas, "REC");
+        elements_button_left(canvas, locale_translate("Config", "Настройки"));
+        elements_button_center(canvas, locale_translate("REC", "ЗАПИСЬ"));
         break;
 
     default:
-        elements_button_center(canvas, "Stop");
+        elements_button_center(canvas, locale_translate("Stop", "Стоп"));
         break;
     }
 

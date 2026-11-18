@@ -1,4 +1,5 @@
 #include "../bad_usb_app_i.h"
+#include <locale/locale.h>
 
 typedef enum {
     BadUsbCustomEventErrorBack,
@@ -26,13 +27,13 @@ void bad_usb_scene_error_on_enter(void* context) {
             AlignCenter,
             AlignTop,
             FontSecondary,
-            "No SD card or\napp data found.\nThis app will not\nwork without\nrequired files.");
+            locale_translate("No SD card or\napp data found.\nThis app will not\nwork without\nrequired files.", "Нет SD-карты или\nфайлов приложения.\nРабота невозможна\nбез нужных файлов."));
         widget_add_button_element(
-            app->widget, GuiButtonTypeLeft, "Back", bad_usb_scene_error_event_callback, app);
+            app->widget, GuiButtonTypeLeft, locale_translate("Back", "Назад"), bad_usb_scene_error_event_callback, app);
     } else if(app->error == BadUsbAppErrorCloseRpc) {
         widget_add_icon_element(app->widget, 78, 0, &I_ActiveConnection_50x64);
         widget_add_string_multiline_element(
-            app->widget, 3, 2, AlignLeft, AlignTop, FontPrimary, "Connection\nIs Active!");
+            app->widget, 3, 2, AlignLeft, AlignTop, FontPrimary, locale_translate("Connection\nIs Active!", "Соединение\nактивно!"));
         widget_add_string_multiline_element(
             app->widget,
             3,
@@ -40,7 +41,7 @@ void bad_usb_scene_error_on_enter(void* context) {
             AlignLeft,
             AlignTop,
             FontSecondary,
-            "Disconnect from\nPC or phone to\nuse this function.");
+            locale_translate("Disconnect from\nPC or phone to\nuse this function.", "Отключите ПК или\nтелефон для работы."));
     }
 
     view_dispatcher_switch_to_view(app->view_dispatcher, BadUsbAppViewWidget);

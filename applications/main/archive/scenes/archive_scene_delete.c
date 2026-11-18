@@ -1,6 +1,7 @@
 #include "../archive_i.h"
 #include "../helpers/archive_apps.h"
 #include "../helpers/archive_browser.h"
+#include <locale/locale.h>
 
 #define SCENE_DELETE_CUSTOM_EVENT (0UL)
 #define MAX_TEXT_INPUT_LEN        22
@@ -18,9 +19,9 @@ void archive_scene_delete_on_enter(void* context) {
     ArchiveApp* app = (ArchiveApp*)context;
 
     widget_add_button_element(
-        app->widget, GuiButtonTypeLeft, "Cancel", archive_scene_delete_widget_callback, app);
+        app->widget, GuiButtonTypeLeft, locale_translate("Cancel", "Отмена"), archive_scene_delete_widget_callback, app);
     widget_add_button_element(
-        app->widget, GuiButtonTypeRight, "Delete", archive_scene_delete_widget_callback, app);
+        app->widget, GuiButtonTypeRight, locale_translate("Delete", "Удалить"), archive_scene_delete_widget_callback, app);
 
     FuriString* filename;
     filename = furi_string_alloc();
@@ -39,10 +40,14 @@ void archive_scene_delete_on_enter(void* context) {
     path_extract_filename(current_path, filename, false);
     furi_string_free(current_path);
 
-    // File name on its own line in the small font, a long one broke mid-word before and
-    // did not fit in the two big-font lines the old 23px box had room for
-    char delete_str[MAX_NAME_LEN + 16];
-    snprintf(delete_str, sizeof(delete_str), "\e#Delete\e#\n%s?", furi_string_get_cstr(filename));
+    // Имя файла выводится отдельно мелким шрифтом, чтобы длинные имена помещались.
+    char delete_str[MAX_NAME_LEN + 48];
+    snprintf(
+        delete_str,
+        sizeof(delete_str),
+        "\e#%s\e#\n%s?",
+        locale_translate("Delete", "Удалить"),
+        furi_string_get_cstr(filename));
     widget_add_text_box_element(
         app->widget, 0, 0, 128, 52, AlignCenter, AlignCenter, delete_str, true);
 

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "input_settings_app.h"
+#include <locale/locale.h>
 
 #define TAG "InputSettingsApp"
 
@@ -37,7 +38,10 @@ const uint32_t vibro_touch_trigger_mask_value[VIBRO_TOUCH_TRIGGER_MASK_COUNT] = 
 
 static void input_settings_vibro_touch_level_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, vibro_touch_level_text[index]);
+    variable_item_set_current_value_text(
+        item,
+        locale_translate(
+            vibro_touch_level_text[index], index == 0 ? "Выкл" : vibro_touch_level_text[index]));
 
     InputSettingsApp* app = variable_item_get_context(item);
     app->settings->vibro_touch_level = vibro_touch_level_value[index];
@@ -50,7 +54,8 @@ static void input_settings_vibro_touch_level_changed(VariableItem* item) {
 
 static void input_settings_vibro_touch_trigger_mask_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, vibro_touch_trigger_mask_text[index]);
+    const char* russian[] = {"Нажатие", "Отпускание", "Оба"};
+    variable_item_set_current_value_text(item, locale_translate(vibro_touch_trigger_mask_text[index], russian[index]));
 
     InputSettingsApp* app = variable_item_get_context(item);
     app->settings->vibro_touch_trigger_mask = vibro_touch_trigger_mask_value[index];
@@ -82,7 +87,7 @@ InputSettingsApp* input_settings_app_alloc(void) {
 
     item = variable_item_list_add(
         app->variable_item_list,
-        "Buttons Vibro",
+        locale_translate("Buttons Vibro", "Вибро кнопок"),
         VIBRO_TOUCH_LEVEL_COUNT,
         input_settings_vibro_touch_level_changed,
         app);
@@ -90,11 +95,12 @@ InputSettingsApp* input_settings_app_alloc(void) {
     value_index = value_index_uint32(
         app->settings->vibro_touch_level, vibro_touch_level_value, VIBRO_TOUCH_LEVEL_COUNT);
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, vibro_touch_level_text[value_index]);
+    variable_item_set_current_value_text(
+        item, locale_translate(vibro_touch_level_text[value_index], value_index == 0 ? "Выкл" : vibro_touch_level_text[value_index]));
 
     item = variable_item_list_add(
         app->variable_item_list,
-        "Vibro Trigger",
+        locale_translate("Vibro Trigger", "Вибро при"),
         VIBRO_TOUCH_TRIGGER_MASK_COUNT,
         input_settings_vibro_touch_trigger_mask_changed,
         app);
@@ -104,7 +110,9 @@ InputSettingsApp* input_settings_app_alloc(void) {
         vibro_touch_trigger_mask_value,
         VIBRO_TOUCH_TRIGGER_MASK_COUNT);
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, vibro_touch_trigger_mask_text[value_index]);
+    const char* russian_trigger[] = {"Нажатие", "Отпускание", "Оба"};
+    variable_item_set_current_value_text(
+        item, locale_translate(vibro_touch_trigger_mask_text[value_index], russian_trigger[value_index]));
 
     // create and setup view and view dispatcher
     app->view_dispatcher = view_dispatcher_alloc();

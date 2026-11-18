@@ -1,4 +1,5 @@
 #include "../ibutton_i.h"
+#include <locale/locale.h>
 
 static void ibutton_scene_retry_confirm_widget_callback(
     GuiButtonType result,
@@ -15,13 +16,13 @@ void ibutton_scene_retry_confirm_on_enter(void* context) {
     Widget* widget = ibutton->widget;
 
     widget_add_button_element(
-        widget, GuiButtonTypeLeft, "Retry", ibutton_scene_retry_confirm_widget_callback, ibutton);
+        widget, GuiButtonTypeLeft, locale_translate("Retry", "Повторить"), ibutton_scene_retry_confirm_widget_callback, ibutton);
     widget_add_button_element(
-        widget, GuiButtonTypeRight, "Stay", ibutton_scene_retry_confirm_widget_callback, ibutton);
+        widget, GuiButtonTypeRight, locale_translate("Stay", "Остаться"), ibutton_scene_retry_confirm_widget_callback, ibutton);
     widget_add_string_element(
-        widget, 64, 19, AlignCenter, AlignBottom, FontPrimary, "Retry Reading?");
+        widget, 64, 19, AlignCenter, AlignBottom, FontPrimary, locale_translate("Retry Reading?", "Повторить чтение?"));
     widget_add_string_element(
-        widget, 64, 29, AlignCenter, AlignBottom, FontSecondary, "All unsaved data will be lost!");
+        widget, 64, 29, AlignCenter, AlignBottom, FontSecondary, locale_translate("All unsaved data will be lost!", "Все несохранённые данные будут потеряны!"));
 
     view_dispatcher_switch_to_view(ibutton->view_dispatcher, iButtonViewWidget);
 }

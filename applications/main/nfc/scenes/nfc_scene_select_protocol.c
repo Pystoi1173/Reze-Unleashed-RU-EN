@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_select_protocol_submenu_callback(void* context, uint32_t index) {
     NfcApp* instance = context;
@@ -13,11 +14,11 @@ void nfc_scene_select_protocol_on_enter(void* context) {
     FuriString* temp_str = furi_string_alloc();
     const char* prefix;
     if(scene_manager_has_previous_scene(instance->scene_manager, NfcSceneExtraActions)) {
-        prefix = "Read";
+        prefix = locale_translate("Read", "Читать");
         nfc_detected_protocols_fill_all_protocols(instance->detected_protocols);
     } else {
-        prefix = "Read as";
-        submenu_set_header(submenu, "Multi-protocol card");
+        prefix = locale_translate("Read as", "Читать как");
+        submenu_set_header(submenu, locale_translate("Multi-protocol card", "Многопротокольная карта"));
     }
 
     for(uint32_t i = 0; i < nfc_detected_protocols_get_num(instance->detected_protocols); i++) {

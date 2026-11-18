@@ -1,6 +1,7 @@
 #include "../subghz_i.h"
 #include "subghz_scene_start.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 #include <lib/subghz/protocols/raw.h>
 
@@ -26,36 +27,36 @@ void subghz_scene_start_on_enter(void* context) {
     subghz_txrx_radio_device_poll_reacquire(subghz->txrx);
 
     submenu_add_item(
-        subghz->submenu, "Read", SubmenuIndexRead, subghz_scene_start_submenu_callback, subghz);
+        subghz->submenu, locale_translate("Read", "Читать"), SubmenuIndexRead, subghz_scene_start_submenu_callback, subghz);
     submenu_add_item(
         subghz->submenu,
-        "Read RAW",
+        locale_translate("Read RAW", "Читать RAW"),
         SubmenuIndexReadRAW,
         subghz_scene_start_submenu_callback,
         subghz);
     submenu_add_item(
-        subghz->submenu, "Saved", SubmenuIndexSaved, subghz_scene_start_submenu_callback, subghz);
+        subghz->submenu, locale_translate("Saved", "Сохранённые"), SubmenuIndexSaved, subghz_scene_start_submenu_callback, subghz);
     submenu_add_item(
         subghz->submenu,
-        "Add Manually",
+        locale_translate("Add Manually", "Добавить вручную"),
         SubmenuIndexAddManually,
         subghz_scene_start_submenu_callback,
         subghz);
     submenu_add_item(
         subghz->submenu,
-        "Add Manually [Advanced]",
+        locale_translate("Add Manually [Advanced]", "Добавить вручную [доп.]"),
         SubmenuIndexAddManuallyAdvanced,
         subghz_scene_start_submenu_callback,
         subghz);
     submenu_add_item(
         subghz->submenu,
-        "Frequency Analyzer",
+        locale_translate("Frequency Analyzer", "Анализатор частоты"),
         SubmenuIndexFrequencyAnalyzer,
         subghz_scene_start_submenu_callback,
         subghz);
     submenu_add_item(
         subghz->submenu,
-        "Radio Settings",
+        locale_translate("Radio Settings", "Настройки радио"),
         SubmenuIndexExtSettings,
         subghz_scene_start_submenu_callback,
         subghz);

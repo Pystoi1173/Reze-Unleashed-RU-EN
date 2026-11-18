@@ -4,6 +4,7 @@ App(
     apptype=FlipperAppType.MENUEXTERNAL,
     entry_point="infrared_app",
     targets=["f7"],
+    requires=["locale"],
     icon="A_Infrared_14",
     stack_size=3 * 1024,
     order=40,

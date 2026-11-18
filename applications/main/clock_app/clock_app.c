@@ -10,6 +10,7 @@
 
 #include <storage/storage.h>
 #include <toolbox/saved_struct.h>
+#include <locale/locale.h>
 
 #include "clock_app.h"
 
@@ -201,7 +202,8 @@ static void clock_render_callback(Canvas* const canvas, void* ctx) {
         canvas_set_font(canvas, FontPrimary);
         canvas_draw_str_aligned(canvas, 64, 26, AlignCenter, AlignCenter, "! ALARM !");
         canvas_set_font(canvas, FontSecondary);
-        canvas_draw_str_aligned(canvas, 64, 44, AlignCenter, AlignCenter, "Press any key to stop");
+        canvas_draw_str_aligned(
+            canvas, 64, 44, AlignCenter, AlignCenter, locale_translate("Press any key to stop", "Нажмите любую кнопку для остановки"));
         return;
     }
 
@@ -273,7 +275,7 @@ static void clock_render_callback(Canvas* const canvas, void* ctx) {
             date_pct_string, sizeof(date_pct_string), "%s   %u%%", date_string, state->battery_pct);
         canvas_draw_str_aligned(
             canvas, 64, 20, AlignCenter, AlignTop, date_pct_string); // DRAW DATE + BATTERY
-        elements_button_left(canvas, "Reset");
+        elements_button_left(canvas, locale_translate("Reset", "Сброс"));
     } else {
         canvas_draw_str_aligned(canvas, 64, 32, AlignCenter, AlignCenter, time_string);
         canvas_set_font(canvas, FontSecondary);
@@ -294,9 +296,9 @@ static void clock_render_callback(Canvas* const canvas, void* ctx) {
         }
     }
     if(timer_running) {
-        elements_button_center(canvas, "Stop");
+        elements_button_center(canvas, locale_translate("Stop", "Стоп"));
     } else if(timer_start_timestamp != 0 && !timer_running) {
-        elements_button_center(canvas, "Start");
+        elements_button_center(canvas, locale_translate("Start", "Старт"));
     }
 
     // A small bell + alarm time on the left when armed, so the user can see the
@@ -442,7 +444,8 @@ static void alarm_time_draw(Canvas* canvas, void* ctx) {
     canvas_clear(canvas);
 
     canvas_set_font(canvas, FontPrimary);
-    canvas_draw_str_aligned(canvas, 64, 4, AlignCenter, AlignTop, "Alarm time");
+    canvas_draw_str_aligned(
+        canvas, 64, 4, AlignCenter, AlignTop, locale_translate("Alarm time", "Время будильника"));
 
     char hh[4], mm[4];
     bool pm = false;
@@ -484,7 +487,13 @@ static void alarm_time_draw(Canvas* canvas, void* ctx) {
     canvas_draw_line(canvas, ux - uw / 2, 46, ux + uw / 2, 46);
 
     canvas_set_font(canvas, FontSecondary);
-    canvas_draw_str_aligned(canvas, 64, 60, AlignCenter, AlignBottom, "Up/Down set  OK save");
+    canvas_draw_str_aligned(
+        canvas,
+        64,
+        60,
+        AlignCenter,
+        AlignBottom,
+        locale_translate("Up/Down set  OK save", "Вверх/Вниз — настройка  ОК — сохранить"));
 }
 
 static bool alarm_time_input(InputEvent* event, void* context) {
@@ -683,11 +692,17 @@ int32_t clock_app(void* p) {
     // Alarm menu
     app->alarm_menu = variable_item_list_alloc();
     app->alarm_toggle_item =
-        variable_item_list_add(app->alarm_menu, "Alarm", 2, alarm_toggle_changed, app);
+        variable_item_list_add(
+             app->alarm_menu,
+             locale_translate("Alarm", "Будильник"),
+             2,
+             alarm_toggle_changed,
+             app);
     variable_item_set_current_value_index(app->alarm_toggle_item, app->settings.alarm_enabled);
     variable_item_set_current_value_text(
         app->alarm_toggle_item, app->settings.alarm_enabled ? "ON" : "OFF");
-    app->alarm_time_item = variable_item_list_add(app->alarm_menu, "Set time", 1, NULL, app);
+    app->alarm_time_item = variable_item_list_add(
+        app->alarm_menu, locale_translate("Set time", "Задать время"), 1, NULL, app);
     refresh_time_menu_item(app);
     variable_item_list_set_enter_callback(app->alarm_menu, alarm_menu_enter, app);
     view_dispatcher_add_view(

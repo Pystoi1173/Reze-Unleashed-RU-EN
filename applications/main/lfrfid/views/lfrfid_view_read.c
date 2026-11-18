@@ -1,6 +1,7 @@
 #include "lfrfid_view_read.h"
 #include <gui/elements.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 #define TEMP_STR_LEN 128
 
@@ -32,8 +33,14 @@ static void lfrfid_view_read_draw_callback(Canvas* canvas, void* _model) {
     }
 
     if(active >= 0) {
-        char header[16];
-        snprintf(header, sizeof(header), "Reading %d/%zu", active + 1, COUNT_OF(steps));
+        char header[24];
+        snprintf(
+            header,
+            sizeof(header),
+            "%s %d/%zu",
+            locale_translate("Reading", "Чтение"),
+            active + 1,
+            COUNT_OF(steps));
         canvas_draw_str(canvas, 70, 14, header);
 
         for(size_t i = 0; i < COUNT_OF(steps); i++) {
@@ -49,7 +56,7 @@ static void lfrfid_view_read_draw_callback(Canvas* canvas, void* _model) {
             canvas_draw_str(canvas, 77, y, steps[i]);
         }
     } else {
-        canvas_draw_str(canvas, 72, 16, "Reading");
+        canvas_draw_str(canvas, 72, 16, locale_translate("Reading", "Чтение"));
 
         if(model->read_mode == LfRfidReadAskOnly) {
             canvas_draw_str(canvas, 77, 35, "ASK");
@@ -62,7 +69,7 @@ static void lfrfid_view_read_draw_callback(Canvas* canvas, void* _model) {
     }
 
     canvas_set_font(canvas, FontSecondary);
-    canvas_draw_str(canvas, 61, 60, "Don't move card");
+    canvas_draw_str(canvas, 61, 60, locale_translate("Don't move card", "Не двигайте карту"));
 }
 
 void lfrfid_view_read_enter(void* context) {

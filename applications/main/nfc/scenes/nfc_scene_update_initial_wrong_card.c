@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_update_initial_wrong_card_widget_callback(
     GuiButtonType result,
@@ -17,7 +18,7 @@ void nfc_scene_update_initial_wrong_card_on_enter(void* context) {
     notification_message(instance->notifications, &sequence_error);
 
     widget_add_icon_element(widget, 83, 22, &I_WarningDolphinFlip_45x42);
-    widget_add_string_element(widget, 3, 4, AlignLeft, AlignTop, FontPrimary, "Wrong Card!");
+    widget_add_string_element(widget, 3, 4, AlignLeft, AlignTop, FontPrimary, locale_translate("Wrong Card!", "Неверная карта!"));
     widget_add_string_multiline_element(
         widget,
         4,
@@ -25,11 +26,11 @@ void nfc_scene_update_initial_wrong_card_on_enter(void* context) {
         AlignLeft,
         AlignTop,
         FontSecondary,
-        "Data management\nis only possible\nwith source card");
+        locale_translate("Data management\nis only possible\nwith source card", "Управление данными\nвозможно только\nс исходной картой"));
     widget_add_button_element(
         widget,
         GuiButtonTypeLeft,
-        "Retry",
+        locale_translate("Retry", "Повторить"),
         nfc_scene_update_initial_wrong_card_widget_callback,
         instance);
 

@@ -1,6 +1,7 @@
 #include "detect_reader.h"
 #include <assets_icons.h>
 #include <gui/elements.h>
+#include <locale/locale.h>
 
 #define DETECT_READER_UID_MAX_LEN (10)
 
@@ -19,22 +20,22 @@ typedef struct {
 
 static void detect_reader_draw_callback(Canvas* canvas, void* model) {
     DetectReaderViewModel* m = model;
-    char text[32] = {};
+    char text[64] = {};
 
     // Draw header and icon
     canvas_draw_icon(canvas, 0, 16, &I_Modern_reader_18x34);
     if(m->state == DetectReaderStateStart) {
-        snprintf(text, sizeof(text), "Touch the reader");
+        strlcpy(text, locale_translate("Touch the reader", "Коснитесь считывателя"), sizeof(text));
         canvas_draw_icon(canvas, 21, 13, &I_Move_flipper_26x39);
         if(furi_string_size(m->uid_str)) {
             elements_multiline_text_aligned(
                 canvas, 64, 64, AlignCenter, AlignBottom, furi_string_get_cstr(m->uid_str));
         }
     } else if(m->state == DetectReaderStateReaderDetected) {
-        snprintf(text, sizeof(text), "Move the Flipper away");
+        strlcpy(text, locale_translate("Move the Flipper away", "Уберите Flipper"), sizeof(text));
         canvas_draw_icon(canvas, 24, 25, &I_Release_arrow_18x15);
     } else if(m->state == DetectReaderStateReaderLost) {
-        snprintf(text, sizeof(text), "Touch the reader again");
+        strlcpy(text, locale_translate("Touch the reader again", "Снова коснитесь считывателя"), sizeof(text));
         canvas_draw_icon(canvas, 21, 13, &I_Move_flipper_26x39);
     }
 
@@ -43,17 +44,17 @@ static void detect_reader_draw_callback(Canvas* canvas, void* model) {
     // Draw collected nonces
     if(m->state == DetectReaderStateStart) {
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, "Emulating...");
+        canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, locale_translate("Emulating...", "Эмуляция..."));
         canvas_set_font(canvas, FontSecondary);
         canvas_draw_str_aligned(canvas, 51, 35, AlignLeft, AlignTop, "MIFARE MFkey32");
     } else {
         if(m->state == DetectReaderStateDone) {
             canvas_set_font(canvas, FontPrimary);
-            canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, "Completed!");
+            canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, locale_translate("Completed!", "Готово!"));
             canvas_draw_icon(canvas, 24, 23, &I_check_big_20x17);
         } else {
             canvas_set_font(canvas, FontPrimary);
-            canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, "Collecting...");
+            canvas_draw_str_aligned(canvas, 51, 22, AlignLeft, AlignTop, locale_translate("Collecting...", "Сбор..."));
         }
         canvas_set_font(canvas, FontSecondary);
         snprintf(text, sizeof(text), "Nonce pairs: %d/%d", m->nonces, m->nonces_max);
@@ -61,7 +62,7 @@ static void detect_reader_draw_callback(Canvas* canvas, void* model) {
     }
     // Draw button
     if(m->nonces > 0) {
-        elements_button_center(canvas, "Done");
+        elements_button_center(canvas, locale_translate("Done", "Готово"));
     }
 }
 

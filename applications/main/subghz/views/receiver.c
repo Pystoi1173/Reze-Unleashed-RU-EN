@@ -6,6 +6,7 @@
 #include <gui/elements.h>
 #include <assets_icons.h>
 #include <m-array.h>
+#include <locale/locale.h>
 
 #define FRAME_HEIGHT 12
 #define MAX_LEN_PX   111
@@ -305,7 +306,7 @@ void subghz_view_receiver_draw(Canvas* canvas, SubGhzViewReceiverModel* model) {
     canvas_set_font(canvas, FontSecondary);
 
     if(model->mode == SubGhzViewReceiverModeLive) {
-        elements_button_left(canvas, "Config");
+        elements_button_left(canvas, locale_translate("Config", "Настройки"));
         //canvas_draw_line(canvas, 46, 51, 125, 51);
     } else {
         canvas_draw_line(canvas, 2, 52, 125, 52);
@@ -361,9 +362,9 @@ void subghz_view_receiver_draw(Canvas* canvas, SubGhzViewReceiverModel* model) {
                                                                         &I_Fishing_123x52);
             canvas_set_font(canvas, FontPrimary);
             if(model->hopping_enabled) {
-                canvas_draw_str(canvas, 59, 46, "Hopper scan...");
+                canvas_draw_str(canvas, 59, 46, locale_translate("Hopper scan...", "Сканирование с перебором..."));
             } else {
-                canvas_draw_str(canvas, 59, 46, "Fixed scan...");
+                canvas_draw_str(canvas, 59, 46, locale_translate("Fixed scan...", "Сканирование фиксированной частоты..."));
             }
             //canvas_draw_line(canvas, 46, 51, 125, 51);
             canvas_set_font(canvas, FontSecondary);
@@ -381,7 +382,7 @@ void subghz_view_receiver_draw(Canvas* canvas, SubGhzViewReceiverModel* model) {
                 (model->device_type == SubGhzRadioDeviceTypeInternal) ? &I_Scanning_123x52 :
                                                                         &I_Fishing_123x52);
             canvas_set_font(canvas, FontPrimary);
-            canvas_draw_str(canvas, 63, 46, "Decoding...");
+            canvas_draw_str(canvas, 63, 46, locale_translate("Decoding...", "Декодирование..."));
             canvas_set_font(canvas, FontSecondary);
         }
     }
@@ -392,7 +393,7 @@ void subghz_view_receiver_draw(Canvas* canvas, SubGhzViewReceiverModel* model) {
     switch(model->bar_show) {
     case SubGhzViewReceiverBarShowLock:
         canvas_draw_icon(canvas, 64, 55, &I_Lock_7x8);
-        canvas_draw_str(canvas, 74, 62, "Locked");
+        canvas_draw_str(canvas, 74, 62, locale_translate("Locked", "Заблокировано"));
         break;
     case SubGhzViewReceiverBarShowToUnlockPress:
         canvas_draw_str(canvas, 43, 62, furi_string_get_cstr(model->frequency_str));
@@ -430,7 +431,7 @@ void subghz_view_receiver_draw(Canvas* canvas, SubGhzViewReceiverModel* model) {
         break;
     case SubGhzViewReceiverBarShowUnlock:
         canvas_draw_icon(canvas, 64, 55, &I_Unlock_7x8);
-        canvas_draw_str(canvas, 74, 62, "Unlocked");
+        canvas_draw_str(canvas, 74, 62, locale_translate("Unlocked", "Разблокировано"));
         break;
     default: {
         const char* frequency_str = furi_string_get_cstr(model->frequency_str);

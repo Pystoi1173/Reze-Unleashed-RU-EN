@@ -1,5 +1,6 @@
 #include "../lfrfid_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 static void lfrfid_scene_start_submenu_callback(void* context, uint32_t index) {
     LfRfid* app = context;
@@ -12,23 +13,23 @@ void lfrfid_scene_start_on_enter(void* context) {
     Submenu* submenu = app->submenu;
 
     submenu_add_item(
-        submenu, "Read", LfRfidMenuIndexRead, lfrfid_scene_start_submenu_callback, app);
+        submenu, locale_translate("Read", "Читать"), LfRfidMenuIndexRead, lfrfid_scene_start_submenu_callback, app);
     submenu_add_item(
-        submenu, "Saved", LfRfidMenuIndexSaved, lfrfid_scene_start_submenu_callback, app);
+        submenu, locale_translate("Saved", "Сохранённые"), LfRfidMenuIndexSaved, lfrfid_scene_start_submenu_callback, app);
     submenu_add_item(
         submenu,
-        "Add Manually",
+        locale_translate("Add Manually", "Добавить вручную"),
         LfRfidMenuIndexAddManually,
         lfrfid_scene_start_submenu_callback,
         app);
     submenu_add_item(
         submenu,
-        "Extra Actions",
+        locale_translate("Extra Actions", "Доп. действия"),
         LfRfidMenuIndexExtraActions,
         lfrfid_scene_start_submenu_callback,
         app);
     submenu_add_item(
-        submenu, "Settings", LfRfidMenuIndexSettings, lfrfid_scene_start_submenu_callback, app);
+        submenu, locale_translate("Settings", "Настройки"), LfRfidMenuIndexSettings, lfrfid_scene_start_submenu_callback, app);
 
     submenu_set_selected_item(
         submenu, scene_manager_get_scene_state(app->scene_manager, LfRfidSceneStart));

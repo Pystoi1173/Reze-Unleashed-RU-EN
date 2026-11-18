@@ -3,6 +3,7 @@
 #include <assets_icons.h>
 #include <input/input.h>
 #include <gui/elements.h>
+#include <locale/locale.h>
 
 #include <lib/subghz/blocks/custom_btn.h>
 
@@ -118,7 +119,7 @@ void subghz_view_transmitter_draw(Canvas* canvas, SubGhzViewTransmitterModel* mo
             58,
             62,
             (model->device_type == SubGhzRadioDeviceTypeInternal) ? "R: Int" : "R: Ext");
-        subghz_view_transmitter_button_right(canvas, "Send");
+        subghz_view_transmitter_button_right(canvas, locale_translate("Send", "Отправить"));
     }
 }
 

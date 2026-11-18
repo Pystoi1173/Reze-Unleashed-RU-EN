@@ -9,6 +9,18 @@ extern "C" {
 #endif
 
 typedef enum {
+    LocaleLanguageRussian = 0,
+    LocaleLanguageEnglish = 1,
+} LocaleLanguage;
+
+/** Получить или изменить язык интерфейса. По умолчанию используется русский. */
+LocaleLanguage locale_get_language(void);
+void locale_set_language(LocaleLanguage language);
+
+/** Вернуть русский текст для выбранного языка или английский без изменений. */
+const char* locale_translate(const char* english, const char* russian);
+
+typedef enum {
     LocaleMeasurementUnitsMetric = 0, /**< Metric measurement units */
     LocaleMeasurementUnitsImperial = 1, /**< Imperial measurement units */
 } LocaleMeasurementUnits;

@@ -1,6 +1,8 @@
 #include "assets_icons.h"
 #include "toolbox/path.h"
 #include <furi.h>
+#include <locale/locale.h>
+
 #include "archive_browser_view.h"
 #include "../helpers/archive_browser.h"
 
@@ -56,48 +58,48 @@ static void contex_menu_filemanager_init(ArchiveBrowserViewModel* model) {
     if(model->item_cnt > 0) {
         if(model->clipboard_mode == CLIPBOARD_MODE_OFF) {
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Cut", ArchiveBrowserEventFileMenuCut);
+                menu_array_push_raw(model->context_menu), locale_translate("Cut", "Вырезать"), ArchiveBrowserEventFileMenuCut);
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Copy", ArchiveBrowserEventFileMenuCopy);
+                menu_array_push_raw(model->context_menu), locale_translate("Copy", "Копировать"), ArchiveBrowserEventFileMenuCopy);
         } else if(model->clipboard_mode == CLIPBOARD_MODE_CUT) {
             archive_menu_add_item(
                 menu_array_push_raw(model->context_menu),
-                "Paste",
+                locale_translate("Paste", "Вставить"),
                 ArchiveBrowserEventFileMenuPaste_Cut);
         } else if(model->clipboard_mode == CLIPBOARD_MODE_COPY) {
             archive_menu_add_item(
                 menu_array_push_raw(model->context_menu),
-                "Paste",
+                locale_translate("Paste", "Вставить"),
                 ArchiveBrowserEventFileMenuPaste_Copy);
         }
 
         archive_menu_add_item(
-            menu_array_push_raw(model->context_menu), "NewDir", ArchiveBrowserEventFileMenuNewDir);
+            menu_array_push_raw(model->context_menu), locale_translate("NewDir", "Новая папка"), ArchiveBrowserEventFileMenuNewDir);
         archive_menu_add_item(
-            menu_array_push_raw(model->context_menu), "Rename", ArchiveBrowserEventFileMenuRename);
+            menu_array_push_raw(model->context_menu), locale_translate("Rename", "Переименовать"), ArchiveBrowserEventFileMenuRename);
         archive_menu_add_item(
-            menu_array_push_raw(model->context_menu), "Delete", ArchiveBrowserEventFileMenuDelete);
+            menu_array_push_raw(model->context_menu), locale_translate("Delete", "Удалить"), ArchiveBrowserEventFileMenuDelete);
     } else {
         if(model->clipboard_mode == CLIPBOARD_MODE_CUT) {
             archive_menu_add_item(
                 menu_array_push_raw(model->context_menu),
-                "Paste",
+                locale_translate("Paste", "Вставить"),
                 ArchiveBrowserEventFileMenuPaste_Cut);
         } else if(model->clipboard_mode == CLIPBOARD_MODE_COPY) {
             archive_menu_add_item(
                 menu_array_push_raw(model->context_menu),
-                "Paste",
+                locale_translate("Paste", "Вставить"),
                 ArchiveBrowserEventFileMenuPaste_Copy);
         }
         archive_menu_add_item(
-            menu_array_push_raw(model->context_menu), "NewDir", ArchiveBrowserEventFileMenuNewDir);
+            menu_array_push_raw(model->context_menu), locale_translate("NewDir", "Новая папка"), ArchiveBrowserEventFileMenuNewDir);
     }
 }
 
 static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
     if(menu_array_size(model->context_menu) == 0) {
         // Context menu is empty, init array
-        const char* item_pin = "Pin";
+        const char* item_pin = locale_translate("Pin", "Закрепить");
 
         // Need init context menu
         ArchiveFile_t* selected =
@@ -106,7 +108,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
                 NULL;
 
         if(selected && ((selected->fav) || (model->tab_idx == ArchiveTabFavorites))) {
-            item_pin = "Unpin";
+            item_pin = locale_translate("Unpin", "Открепить");
         }
 
         if(!selected) {
@@ -133,7 +135,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
                 if(model->tab_idx == ArchiveTabFavorites) {
                     archive_menu_add_item(
                         menu_array_push_raw(model->context_menu),
-                        "Move",
+                        locale_translate("Move", "Переместить"),
                         ArchiveBrowserEventEnterFavMove);
                 }
             }
@@ -148,12 +150,12 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
                 // Info, [Show],
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
-                    "Info",
+                    locale_translate("Info", "Инфо"),
                     ArchiveBrowserEventFileMenuInfo);
                 if(selected->is_text_file) {
                     archive_menu_add_item(
                         menu_array_push_raw(model->context_menu),
-                        "Show",
+                        locale_translate("Show", "Показать"),
                         ArchiveBrowserEventFileMenuShow);
                 }
             }
@@ -166,7 +168,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
 
             model->menu_can_switch = false;
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Run", ArchiveBrowserEventFileMenuRun);
+                menu_array_push_raw(model->context_menu), locale_translate("Run", "Запуск"), ArchiveBrowserEventFileMenuRun);
             archive_menu_add_item(
                 menu_array_push_raw(model->context_menu),
                 item_pin,
@@ -174,11 +176,11 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
             if(archive_file_type_is_showable(selected->type)) {
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
-                    "Show",
+                    locale_translate("Show", "Показать"),
                     ArchiveBrowserEventFileMenuShow);
             }
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Move", ArchiveBrowserEventEnterFavMove);
+                menu_array_push_raw(model->context_menu), locale_translate("Move", "Переместить"), ArchiveBrowserEventEnterFavMove);
         } else if(selected->is_app) {
             // Only U2F?
             // Run, Info, [Show], Pin, Delete
@@ -186,13 +188,13 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
 
             //FURI_LOG_D(TAG, "3 types");
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Run", ArchiveBrowserEventFileMenuRun);
+                menu_array_push_raw(model->context_menu), locale_translate("Run", "Запуск"), ArchiveBrowserEventFileMenuRun);
             archive_menu_add_item(
-                menu_array_push_raw(model->context_menu), "Info", ArchiveBrowserEventFileMenuInfo);
+                menu_array_push_raw(model->context_menu), locale_translate("Info", "Инфо"), ArchiveBrowserEventFileMenuInfo);
             if(archive_file_type_is_showable(selected->type)) {
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
-                    "Show",
+                    locale_translate("Show", "Показать"),
                     ArchiveBrowserEventFileMenuShow);
             }
             archive_menu_add_item(
@@ -217,7 +219,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
 
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
-                    "Run",
+                    locale_translate("Run", "Запуск"),
                     ArchiveBrowserEventFileMenuRun);
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
@@ -225,12 +227,12 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
                     ArchiveBrowserEventFileMenuPin);
                 archive_menu_add_item(
                     menu_array_push_raw(model->context_menu),
-                    "Info",
+                    locale_translate("Info", "Инфо"),
                     ArchiveBrowserEventFileMenuInfo);
                 if(archive_file_type_is_showable(selected->type)) {
                     archive_menu_add_item(
                         menu_array_push_raw(model->context_menu),
-                        "Show",
+                        locale_translate("Show", "Показать"),
                         ArchiveBrowserEventFileMenuShow);
                 }
             }
@@ -258,9 +260,17 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
         calc_height,
         model->menu_idx);*/
     if(model->menu_file_manage) {
-        canvas_draw_str(canvas, 82, menu_y + line_height - 1, "Manage");
+        canvas_draw_str(
+            canvas,
+            82,
+            menu_y + line_height - 1,
+            locale_translate("Manage", "Управление"));
     } else {
-        canvas_draw_str(canvas, 82, menu_y + line_height - 1, "Actions");
+        canvas_draw_str(
+            canvas,
+            82,
+            menu_y + line_height - 1,
+            locale_translate("Actions", "Действия"));
     }
     if(model->menu_can_switch) {
         canvas_draw_icon(canvas, 74, menu_y + 2, &I_ButtonLeft_4x7);
@@ -454,7 +464,12 @@ static void archive_view_render(Canvas* canvas, void* mdl) {
         draw_list(canvas, model);
     } else {
         canvas_draw_str_aligned(
-            canvas, GUI_DISPLAY_WIDTH / 2, 40, AlignCenter, AlignCenter, "Empty");
+            canvas,
+            GUI_DISPLAY_WIDTH / 2,
+            40,
+            AlignCenter,
+            AlignCenter,
+            locale_translate("Empty", "Пусто"));
         if(model->menu) {
             render_item_menu(canvas, model);
         }
