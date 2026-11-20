@@ -43,3 +43,9 @@
 База прошивки — DarkFlippers Unleashed, коммит `53818b18f63e105baaf37ed8eac9a7def58ec8b1`. Для работы с исходниками клонируйте репозиторий с подмодулями (`git clone --recurse-submodules`). [Сборка и устройство локализации](РУССКАЯ_ВЕРСИЯ.md) · [Upstream](https://github.com/DarkFlippers/unleashed-firmware) · [GPL-3.0](LICENSE)
 
 Проект разработан независимо от Flipper Devices, DarkFlippers и правообладателей *Chainsaw Man*. Резе — персонаж манги Тацуки Фудзимото «Человек-бензопила».
+
+## Reze Translate
+
+Отдельный проект для офлайн-перевода английского текста в одиночных играх Windows. В бета-версии доступны OCR, русский перевод поверх игры, профили и файловый режим локализации.
+
+[Репозиторий Reze Translate](https://github.com/Pystoi1173/Reze-Translate) · [Релиз beta2](https://github.com/Pystoi1173/Reze-Translate/releases/tag/v0.1.0-beta2) · [Чат и предложения](https://github.com/Pystoi1173/Reze-Translate/discussions)
