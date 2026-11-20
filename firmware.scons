@@ -8,6 +8,11 @@ from SCons.Node import FS
 
 Import("ENV", "fw_build_meta")
 
+# Limit LTO to the compact release firmware. FAPs and the RAM updater use ordinary objects.
+firmware_lto = fw_build_meta["type"] == "firmware" and ENV["COMPACT"] and not ENV["DEBUG"]
+lto_flags = ["-flto"] if firmware_lto else []
+lto_library_flags = [*lto_flags, "-ffat-lto-objects"] if firmware_lto else []
+
 # Building initial C environment for libs
 env = ENV.Clone(
     tools=[
@@ -46,6 +51,7 @@ env = ENV.Clone(
         "Default": {
             "CCFLAGS": [
                 "-Os",
+                *lto_library_flags,
             ],
             "CPPDEFINES": [
                 "NDEBUG",
@@ -76,6 +82,16 @@ env = ENV.Clone(
                 "LOGS_DEBUG_BUILD" if ENV["LIB_DEBUG"] else "LOGS_RELEASE_BUILD",
             ],
         },
+        "lfrfid": {
+            "CCFLAGS": [
+                "-Os",
+            ],
+            "CPPDEFINES": [
+                "NDEBUG",
+                "FURI_DEBUG" if ENV["DEBUG"] else "FURI_NDEBUG",
+                "LOGS_DEBUG_BUILD" if ENV["LIB_DEBUG"] else "LOGS_RELEASE_BUILD",
+            ],
+        },
     },
     FW_API_TABLE=None,
     _APP_ICONS=None,
@@ -84,6 +100,14 @@ env = ENV.Clone(
 )
 
 env.PreConfigureFwEnvionment()
+if firmware_lto:
+    default_lib_opts = env["FW_LIB_OPTS"]["Default"]
+    for lib in ("flipper7", "freertos", "stm32wb"):
+        env["FW_LIB_OPTS"][lib] = {**default_lib_opts, "CCFLAGS": ["-Os"]}
+    plugin = env["ENV"].get("FBT_LTO_PLUGIN")
+    if not plugin:
+        raise UserError("Set FBT_LTO_PLUGIN to the GCC LTO plugin path")
+    env.Replace(ARFLAGS=[f"--plugin={plugin}", "rcs"], RANLIBCOM="")
 
 if env["IS_BASE_FIRMWARE"]:
     env.Append(
@@ -217,6 +241,8 @@ sources.extend(
 # print(fwenv.Dump())
 
 # Full firmware definition
+if firmware_lto:
+    fwenv.AppendUnique(CCFLAGS=lto_flags, LINKFLAGS=["-Os", "-save-temps=obj", *lto_flags])
 fwelf = fwenv["FW_ELF"] = fwenv.Program(
     "${FIRMWARE_BUILD_CFG}",
     sources,

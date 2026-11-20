@@ -1,5 +1,6 @@
 #include <gui/view_stack.h>
 #include <stdint.h>
+#include <string.h>
 #include <furi.h>
 #include <furi_hal.h>
 #include <dolphin/dolphin.h>
@@ -390,6 +391,11 @@ static bool animation_manager_is_valid_idle_animation(
     return result;
 }
 
+static bool animation_manager_is_reze_idle_animation(const StorageAnimationManifestInfo* info) {
+    const char prefix[] = "L1_Reze_";
+    return strncmp(info->name, prefix, sizeof(prefix) - 1) == 0;
+}
+
 static StorageAnimation*
     animation_manager_select_idle_animation(AnimationManager* animation_manager) {
     if(animation_manager->dummy_mode) {
@@ -403,6 +409,7 @@ static StorageAnimation*
     DolphinStats stats = dolphin_stats(dolphin);
     furi_record_close(RECORD_DOLPHIN);
     uint32_t whole_weight = 0;
+    uint32_t reze_weight = 0;
 
     StorageAnimationList_it_t it;
     for(StorageAnimationList_it(it, animation_list); !StorageAnimationList_end_p(it);) {
@@ -413,6 +420,9 @@ static StorageAnimation*
 
         if(valid) {
             whole_weight += manifest_info->weight;
+            if(animation_manager_is_reze_idle_animation(manifest_info)) {
+                reze_weight += manifest_info->weight;
+            }
             StorageAnimationList_next(it);
         } else {
             animation_storage_free_storage_animation(&storage_animation);
@@ -421,18 +431,27 @@ static StorageAnimation*
         }
     }
 
-    uint32_t lucky_number = furi_hal_random_get() % whole_weight;
-    uint32_t weight = 0;
-
+    const uint32_t pool_weight = reze_weight ? reze_weight : whole_weight;
     StorageAnimation* selected = NULL;
-    for
-        M_EACH(item, animation_list, StorageAnimationList_t) {
-            if(lucky_number < weight) {
-                break;
+    if(pool_weight) {
+        // Discard the incomplete range so every ticket is equally likely.
+        const uint32_t threshold = (0U - pool_weight) % pool_weight;
+        uint32_t random_value;
+        do {
+            random_value = furi_hal_random_get();
+        } while(random_value < threshold);
+        uint32_t lucky_number = random_value % pool_weight;
+        for
+            M_EACH(item, animation_list, StorageAnimationList_t) {
+                const StorageAnimationManifestInfo* info = animation_storage_get_meta(*item);
+                if(reze_weight && !animation_manager_is_reze_idle_animation(info)) continue;
+                if(lucky_number < info->weight) {
+                    selected = *item;
+                    break;
+                }
+                lucky_number -= info->weight;
             }
-            weight += animation_storage_get_meta(*item)->weight;
-            selected = *item;
-        }
+    }
 
     for
         M_EACH(item, animation_list, StorageAnimationList_t) {
@@ -444,10 +463,12 @@ static StorageAnimation*
     StorageAnimationList_clear(animation_list);
 
     /* cache animation, if failed - choose reliable animation */
-    if(!animation_storage_get_bubble_animation(selected)) {
+    if(selected && !animation_storage_get_bubble_animation(selected)) {
         const char* name = animation_storage_get_meta(selected)->name;
         FURI_LOG_E(TAG, "Can't upload animation described in manifest: \'%s\'", name);
         animation_storage_free_storage_animation(&selected);
+    }
+    if(!selected) {
         selected = animation_storage_find_animation(HARDCODED_ANIMATION_NAME);
     }
 

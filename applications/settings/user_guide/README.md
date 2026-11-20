@@ -1,4 +1,10 @@
-# Editable user guide text
+# User Guide text
+
+The current build defines its bilingual topics in `user_guide.c`. Edit the `guide_topics` table to change a title or page, then check the text on the 128×64 screen.
+
+## Legacy compressed guide format
+
+The notes below describe the compressed guide in the preceding alpha release. The generator expects that version of `user_guide.c`.
 
 `guide_text.json` is the preferred editable source for the 12 guide topics. It
 contains the exact 96 UTF-8 strings recovered from `user_guide.c`, including the

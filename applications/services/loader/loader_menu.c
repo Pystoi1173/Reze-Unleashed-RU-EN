@@ -5,11 +5,12 @@
 #include <assets_icons.h>
 #include <applications.h>
 #include <archive/helpers/archive_favorites.h>
+#include <locale/locale.h>
+#include <string.h>
+#include <core/pubsub.h>
 #include "loader.h"
 #include "loader_menu.h"
 #include "loader_guide.h"
-#include <locale/locale.h>
-#include <string.h>
 
 #define TAG "LoaderMenu"
 
@@ -19,7 +20,6 @@ struct LoaderMenu {
     void* context;
     Menu* primary_menu;
     Submenu* settings_menu;
-    LocaleLanguage language;
     ViewDispatcher* view_dispatcher;
 };
 
@@ -32,63 +32,47 @@ typedef enum {
     LoaderMenuEventStart = 1,
 } LoaderMenuEvent;
 
-static const char* loader_menu_label(const char* name) {
-    static const struct {
-        const char* english;
-        const char* russian;
-    } labels[] = {
-        {"Apps", "Приложения"},
-        {"Settings", "Настройки"},
-        {"System", "Система"},
-        {"Desktop", "Рабочий стол"},
-        {"Clock & Alarm", "Часы и будильник"},
-        {"Clock", "Часы"},
-        {"User Guide", "Руководство"},
-        {"Power", "Питание"},
-        {"Storage", "Хранилище"},
-        {"About", "О системе"},
-        {"Input", "Кнопки"},
-        {"LCD and Notifications", "Экран и уведомления"},
-        {"Expansion Modules", "Модули расширения"},
-        {"Passport", "Паспорт"},
-        {"Infrared", "ИК-пульты"},
-        {"125 kHz RFID", "RFID 125 кГц"},
-        {"Sub-GHz Remote", "Пульт Sub-GHz"},
-    };
-    for(size_t i = 0; i < COUNT_OF(labels); i++) {
-        if(strcmp(name, labels[i].english) == 0 || strcmp(name, labels[i].russian) == 0) {
-            return locale_translate(labels[i].english, labels[i].russian);
+#define LOADER_MENU_LANGUAGE_CHANGED (1U << 0)
+
+static const struct {
+    const char* english;
+    const char* russian;
+} loader_menu_text[] = {
+    {"Apps", "Приложения"},
+    {"Sub-GHz", "Суб-ГГц"},
+    {"Sub-GHz Remote", "Пульт Суб-ГГц"},
+    {"125 kHz RFID", "RFID 125 кГц"},
+    {"NFC", "NFC"},
+    {"Infrared", "ИК-порт"},
+    {"GPIO", "GPIO"},
+    {"iButton", "iButton"},
+    {"Bad USB", "Плохой USB"},
+    {"U2F", "U2F"},
+    {"Clock", "Часы"},
+    {"Settings", "Настройки"},
+    {"Power", "Питание"},
+    {"Storage", "Хранилище"},
+    {"System", "Система"},
+    {"User Guide", "Справка"},
+    {"About", "О Flipper"},
+    {"Bluetooth", "Bluetooth"},
+    {"Clock & Alarm", "Часы и будильник"},
+    {"Desktop", "Рабочий стол"},
+    {"Expansion Modules", "Модули расширения"},
+    {"Input", "Ввод"},
+    {"LCD and Notifications", "Экран и уведомления"},
+    {"Passport", "Паспорт"},
+};
+
+static const char* loader_menu_translate(const char* english) {
+    if(locale_get_language() == LocaleLanguageRussian) {
+        for(size_t i = 0; i < COUNT_OF(loader_menu_text); i++) {
+            if(strcmp(english, loader_menu_text[i].english) == 0) {
+                return loader_menu_text[i].russian;
+            }
         }
     }
-    return name;
-}
-
-static void loader_menu_refresh_language(void* context) {
-    LoaderMenu* loader_menu = context;
-    LocaleLanguage language = locale_get_language();
-    if(loader_menu->language == language) return;
-    loader_menu->language = language;
-    with_view_model(
-        menu_get_view(loader_menu->primary_menu),
-        MenuModel * model,
-        {
-            for(size_t i = 0; i < model->count; i++) {
-                model->items[i].label = loader_menu_label(model->items[i].label);
-            }
-        },
-        true);
-    for(size_t i = 0; i < FLIPPER_EXTSETTINGS_APPS_COUNT; i++) {
-        submenu_change_item_label(
-            loader_menu->settings_menu,
-            (uint32_t)FLIPPER_EXTSETTINGS_APPS[i].name,
-            loader_menu_label(FLIPPER_EXTSETTINGS_APPS[i].name));
-    }
-    for(size_t i = 0; i < FLIPPER_SETTINGS_APPS_COUNT; i++) {
-        submenu_change_item_label(
-            loader_menu->settings_menu,
-            (uint32_t)FLIPPER_SETTINGS_APPS[i].name,
-            loader_menu_label(FLIPPER_SETTINGS_APPS[i].name));
-    }
+    return english;
 }
 
 static void loader_menu_start(const char* name) {
@@ -105,7 +89,8 @@ static void loader_menu_apps_callback(void* context, uint32_t index) {
 
 static bool loader_menu_custom_event_callback(void* context, uint32_t event) {
     UNUSED(context);
-    if(event < LoaderMenuEventStart || event >= LoaderMenuEventStart + FLIPPER_APPS_COUNT) {
+    if(event < LoaderMenuEventStart ||
+       event >= LoaderMenuEventStart + FLIPPER_APPS_COUNT) {
         return false;
     }
 
@@ -122,15 +107,8 @@ static bool loader_menu_custom_event_callback(void* context, uint32_t event) {
     Loader* loader = furi_record_open(RECORD_LOADER);
     if(loader_guide_should_show(&settings, (uint32_t)topic)) {
         static const char* const guide_args[LOADER_GUIDE_TOPIC_COUNT] = {
-            "guide:0",
-            "guide:1",
-            "guide:2",
-            "guide:3",
-            "guide:4",
-            "guide:5",
-            "guide:6",
-            "guide:7",
-            "guide:8"};
+            "guide:0", "guide:1", "guide:2", "guide:3", "guide:4",
+            "guide:5", "guide:6", "guide:7", "guide:8"};
         loader_start_with_gui_error(loader, "User Guide", guide_args[topic]);
     } else {
         loader_start_with_gui_error(loader, app->name, NULL);
@@ -184,7 +162,7 @@ static void loader_menu_build_menu(LoaderMenu* loader_menu) {
 
     menu_add_item(
         menu,
-        loader_menu_label(LOADER_APPLICATIONS_NAME),
+        loader_menu_translate(LOADER_APPLICATIONS_NAME),
         &A_Plugins_14,
         i++,
         loader_menu_applications_callback,
@@ -193,7 +171,7 @@ static void loader_menu_build_menu(LoaderMenu* loader_menu) {
     for(i = 0; i < FLIPPER_APPS_COUNT; i++) {
         menu_add_item(
             menu,
-            loader_menu_label(FLIPPER_APPS[i].name),
+            loader_menu_translate(FLIPPER_APPS[i].name),
             FLIPPER_APPS[i].icon,
             i,
             loader_menu_apps_callback,
@@ -203,7 +181,7 @@ static void loader_menu_build_menu(LoaderMenu* loader_menu) {
     for(i = 0; i < FLIPPER_EXTERNAL_APPS_COUNT; i++) {
         menu_add_item(
             menu,
-            loader_menu_label(FLIPPER_EXTERNAL_APPS[i].name),
+            loader_menu_translate(FLIPPER_EXTERNAL_APPS[i].name),
             FLIPPER_EXTERNAL_APPS[i].icon,
             i,
             loader_menu_external_apps_callback,
@@ -212,7 +190,7 @@ static void loader_menu_build_menu(LoaderMenu* loader_menu) {
 
     menu_add_item(
         menu,
-        loader_menu_label("Settings"),
+        loader_menu_translate("Settings"),
         &A_Settings_14,
         i++,
         loader_menu_switch_to_settings,
@@ -223,7 +201,7 @@ static void loader_menu_build_submenu(Submenu* submenu, LoaderMenu* loader_menu)
     for(size_t i = 0; i < FLIPPER_EXTSETTINGS_APPS_COUNT; i++) {
         submenu_add_item_ex(
             submenu,
-            loader_menu_label(FLIPPER_EXTSETTINGS_APPS[i].name),
+            loader_menu_translate(FLIPPER_EXTSETTINGS_APPS[i].name),
             (uint32_t)FLIPPER_EXTSETTINGS_APPS[i].name,
             loader_menu_settings_menu_callback,
             loader_menu);
@@ -231,10 +209,48 @@ static void loader_menu_build_submenu(Submenu* submenu, LoaderMenu* loader_menu)
     for(size_t i = 0; i < FLIPPER_SETTINGS_APPS_COUNT; i++) {
         submenu_add_item_ex(
             submenu,
-            loader_menu_label(FLIPPER_SETTINGS_APPS[i].name),
+            loader_menu_translate(FLIPPER_SETTINGS_APPS[i].name),
             (uint32_t)FLIPPER_SETTINGS_APPS[i].name,
             loader_menu_settings_menu_callback,
             loader_menu);
+    }
+}
+
+static void loader_menu_locale_callback(const void* message, void* context) {
+    UNUSED(message);
+    LoaderMenu* loader_menu = context;
+    furi_thread_flags_set(furi_thread_get_id(loader_menu->thread), LOADER_MENU_LANGUAGE_CHANGED);
+}
+
+static void loader_menu_refresh_labels(void* context) {
+    if(!(furi_thread_flags_clear(LOADER_MENU_LANGUAGE_CHANGED) & LOADER_MENU_LANGUAGE_CHANGED)) {
+        return;
+    }
+    LoaderMenu* loader_menu = context;
+    with_view_model(
+        menu_get_view(loader_menu->primary_menu),
+        MenuModel * model,
+        {
+            size_t pos = 0;
+            model->items[pos++].label = loader_menu_translate(LOADER_APPLICATIONS_NAME);
+            for(size_t i = 0; i < FLIPPER_APPS_COUNT; i++) {
+                model->items[pos++].label = loader_menu_translate(FLIPPER_APPS[i].name);
+            }
+            for(size_t i = 0; i < FLIPPER_EXTERNAL_APPS_COUNT; i++) {
+                model->items[pos++].label = loader_menu_translate(FLIPPER_EXTERNAL_APPS[i].name);
+            }
+            model->items[pos].label = loader_menu_translate("Settings");
+            model->scroll_counter = 0;
+        },
+        true);
+
+    for(size_t i = 0; i < FLIPPER_EXTSETTINGS_APPS_COUNT; i++) {
+        const char* name = FLIPPER_EXTSETTINGS_APPS[i].name;
+        submenu_change_item_label(loader_menu->settings_menu, (uint32_t)name, loader_menu_translate(name));
+    }
+    for(size_t i = 0; i < FLIPPER_SETTINGS_APPS_COUNT; i++) {
+        const char* name = FLIPPER_SETTINGS_APPS[i].name;
+        submenu_change_item_label(loader_menu->settings_menu, (uint32_t)name, loader_menu_translate(name));
     }
 }
 
@@ -243,9 +259,8 @@ static int32_t loader_menu_thread(void* p) {
     furi_assert(loader_menu);
 
     Gui* gui = furi_record_open(RECORD_GUI);
-    Submenu* settings_menu = submenu_alloc();
-    loader_menu->settings_menu = settings_menu;
-    loader_menu_build_submenu(settings_menu, loader_menu);
+    loader_menu->settings_menu = submenu_alloc();
+    loader_menu_build_submenu(loader_menu->settings_menu, loader_menu);
 
     loader_menu->view_dispatcher = view_dispatcher_alloc();
 
@@ -253,18 +268,29 @@ static int32_t loader_menu_thread(void* p) {
     view_set_previous_callback(primary_view, loader_menu_exit);
     view_dispatcher_add_view(loader_menu->view_dispatcher, LoaderMenuViewPrimary, primary_view);
 
-    View* settings_view = submenu_get_view(settings_menu);
+    View* settings_view = submenu_get_view(loader_menu->settings_menu);
     view_set_previous_callback(settings_view, loader_menu_switch_to_primary);
     view_dispatcher_add_view(loader_menu->view_dispatcher, LoaderMenuViewSettings, settings_view);
     view_dispatcher_switch_to_view(loader_menu->view_dispatcher, LoaderMenuViewPrimary);
 
     view_dispatcher_set_event_callback_context(loader_menu->view_dispatcher, loader_menu);
-    view_dispatcher_set_tick_event_callback(
-        loader_menu->view_dispatcher, loader_menu_refresh_language, furi_ms_to_ticks(100));
     view_dispatcher_set_custom_event_callback(
         loader_menu->view_dispatcher, loader_menu_custom_event_callback);
+    FuriEventLoop* event_loop = view_dispatcher_get_event_loop(loader_menu->view_dispatcher);
+    furi_event_loop_subscribe_thread_flags(event_loop, loader_menu_refresh_labels, loader_menu);
+    FuriPubSub* locale_pubsub = furi_record_open(RECORD_LOCALE);
+    FuriPubSubSubscription* subscription =
+        furi_pubsub_subscribe(locale_pubsub, loader_menu_locale_callback, loader_menu);
+
+    // Catch a language change between construction and subscription.
+    loader_menu_locale_callback(NULL, loader_menu);
+    loader_menu_refresh_labels(loader_menu);
     view_dispatcher_attach_to_gui(loader_menu->view_dispatcher, gui, ViewDispatcherTypeFullscreen);
     view_dispatcher_run(loader_menu->view_dispatcher);
+
+    furi_pubsub_unsubscribe(locale_pubsub, subscription);
+    furi_record_close(RECORD_LOCALE);
+    furi_event_loop_unsubscribe_thread_flags(event_loop);
 
     if(loader_menu->closed_cb) {
         loader_menu->closed_cb(loader_menu->context);
@@ -273,7 +299,7 @@ static int32_t loader_menu_thread(void* p) {
     view_dispatcher_remove_view(loader_menu->view_dispatcher, LoaderMenuViewPrimary);
     view_dispatcher_remove_view(loader_menu->view_dispatcher, LoaderMenuViewSettings);
     view_dispatcher_free(loader_menu->view_dispatcher);
-    submenu_free(settings_menu);
+    submenu_free(loader_menu->settings_menu);
     furi_record_close(RECORD_GUI);
 
     return 0;
@@ -284,7 +310,7 @@ LoaderMenu* loader_menu_alloc(void (*closed_cb)(void*), void* context, const Men
     loader_menu->closed_cb = closed_cb;
     loader_menu->context = context;
     loader_menu->primary_menu = menu_alloc();
-    loader_menu->language = locale_get_language();
+    loader_menu->settings_menu = NULL;
     menu_set_style(loader_menu->primary_menu, style);
     loader_menu_build_menu(loader_menu);
     loader_menu->thread = furi_thread_alloc_ex(TAG, 1024, loader_menu_thread, loader_menu);

@@ -533,7 +533,7 @@ VariableItem* variable_item_list_get(VariableItemList* variable_item_list, uint8
                 item = VariableItemArray_get(model->items, position);
             }
         },
-        true);
+        false);
 
     return item;
 }

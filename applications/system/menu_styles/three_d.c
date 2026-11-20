@@ -176,8 +176,6 @@ static void draw(Canvas* canvas, MenuModel* model) {
         len++;
     len = len * away / HALF_STEP;
     if(len > (size_t)(LABEL_MAX - 1)) len = LABEL_MAX - 1;
-    while(len && ((uint8_t)label[len] & 0xC0) == 0x80)
-        len--;
     char text[LABEL_MAX];
     for(size_t i = 0; i < len; i++)
         text[i] = label[i];

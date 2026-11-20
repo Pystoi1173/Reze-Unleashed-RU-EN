@@ -2,22 +2,24 @@
 
 #include <toolbox/saved_struct.h>
 #include <storage/storage.h>
+#include <stdatomic.h>
 
 #define TAG "LocaleSrv"
 #define LOCALE_SETTINGS_PATH INT_PATH(".locale.settings")
 #define LOCALE_SETTINGS_MAGIC 0x4C
 #define LOCALE_SETTINGS_VERSION 1
 
-static LocaleLanguage locale_language = LocaleLanguageRussian;
+static _Atomic(LocaleLanguage) locale_language = LocaleLanguageRussian;
+static FuriPubSub* locale_pubsub;
 
 LocaleLanguage locale_get_language(void) {
-    return locale_language;
+    return atomic_load_explicit(&locale_language, memory_order_relaxed);
 }
 
 void locale_set_language(LocaleLanguage language) {
     if(language != LocaleLanguageRussian && language != LocaleLanguageEnglish) return;
 
-    locale_language = language;
+    atomic_store_explicit(&locale_language, language, memory_order_relaxed);
     const uint8_t value = language;
     if(!saved_struct_save(
            LOCALE_SETTINGS_PATH,
@@ -27,12 +29,16 @@ void locale_set_language(LocaleLanguage language) {
            LOCALE_SETTINGS_VERSION)) {
         FURI_LOG_W(TAG, "Language setting was not saved");
     }
+
+    if(locale_pubsub) {
+        LocaleEvent event = LocaleEventLanguageChanged;
+        furi_pubsub_publish(locale_pubsub, &event);
+    }
 }
 
 const char* locale_translate(const char* english, const char* russian) {
     return (locale_get_language() == LocaleLanguageRussian && russian) ? russian : english;
 }
-
 
 LocaleMeasurementUnits locale_get_measurement_unit(void) {
     return (LocaleMeasurementUnits)furi_hal_rtc_get_locale_units();
@@ -138,9 +144,11 @@ void locale_format_date(
     }
 }
 
-int32_t locale_on_system_start(void* p) {
-    UNUSED(p);
+void locale_on_system_start(void) {
     // Хук вызывается загрузчиком после запуска служб; открытие записи ожидает хранилище.
+    locale_pubsub = furi_pubsub_alloc();
+    furi_record_create(RECORD_LOCALE, locale_pubsub);
+
     uint8_t value = LocaleLanguageRussian;
     if(saved_struct_load(
            LOCALE_SETTINGS_PATH,
@@ -149,7 +157,6 @@ int32_t locale_on_system_start(void* p) {
            LOCALE_SETTINGS_MAGIC,
            LOCALE_SETTINGS_VERSION) &&
        value <= LocaleLanguageEnglish) {
-        locale_language = (LocaleLanguage)value;
+        atomic_store_explicit(&locale_language, (LocaleLanguage)value, memory_order_relaxed);
     }
-    return 0;
 }

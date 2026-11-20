@@ -79,7 +79,9 @@ void subghz_dialog_message_no_memory(SubGhz* subghz) {
         message, locale_translate("Not enough memory", "Недостаточно памяти"), 63, 3, AlignCenter, AlignTop);
     dialog_message_set_text(
         message,
-        locale_translate("Signal can only\nbe saved.\nDelete old signals\nto send it.", "Сигнал можно только\nсохранить.\nУдалите старые сигналы,\nчтобы отправить его."),
+        locale_translate(
+            "Signal can only\nbe saved.\nDelete old signals\nto send it.",
+            "Сигнал можно только\nсохранить.\nУдалите старые сигналы,\nчтобы отправить его."),
         0,
         17,
         AlignLeft,
@@ -93,11 +95,14 @@ void subghz_dialog_message_freq_error(SubGhz* subghz, bool only_rx) {
     DialogsApp* dialogs = subghz->dialogs;
     DialogMessage* message = dialog_message_alloc();
     const char* header_text = locale_translate("Frequency not supported", "Частота не поддерживается");
-    const char* message_text = locale_translate("Frequency\nis outside of\nsupported range.", "Частота\nвне\nдопустимого диапазона.");
+    const char* message_text = locale_translate(
+        "Frequency\nis outside of\nsupported range.", "Частота\nвне\nдопустимого диапазона.");
 
     if(only_rx) {
         header_text = locale_translate("Transmission is blocked", "Передача заблокирована");
-        message_text = locale_translate("Frequency\nis outside of\ndefault range.\nCheck docs.", "Частота\nвне\nстандартного диапазона.\nСм. документацию.");
+        message_text = locale_translate(
+            "Frequency\nis outside of\ndefault range.\nCheck docs.",
+            "Частота\nвне\nстандартного диапазона.\nСм. документацию.");
     }
 
     dialog_message_set_header(message, header_text, 63, 3, AlignCenter, AlignTop);

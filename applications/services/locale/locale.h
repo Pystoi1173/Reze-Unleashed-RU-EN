@@ -4,6 +4,12 @@
 #include <furi.h>
 #include <furi_hal.h>
 
+#define RECORD_LOCALE "locale"
+
+typedef enum {
+    LocaleEventLanguageChanged,
+} LocaleEvent;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

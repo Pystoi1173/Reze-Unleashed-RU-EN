@@ -9,6 +9,7 @@ App(
         "dolphin",
         "storage",
         "input",
+        "locale",
     ],
     provides=["desktop_settings"],
     conflicts=["updater"],

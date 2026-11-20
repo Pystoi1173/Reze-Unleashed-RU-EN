@@ -4,7 +4,7 @@ env.Append(
     LINT_SOURCES=[Dir(".")],
 )
 
-libenv = env.Clone(FW_LIB_NAME="flipper${TARGET_HW}")
+libenv = env.Clone(FW_LIB_NAME=env.subst("flipper${TARGET_HW}"))
 libenv.Append(
     CPPPATH=[
         "#/lib/stm32wb_copro/wpan/interface/patterns/ble_thread/tl",

@@ -662,66 +662,19 @@ void elements_bubble_str(
     canvas_draw_line(canvas, x2, y2, x3, y3);
 }
 
-static size_t elements_utf8_previous(const char* text, size_t offset) {
-    do {
-        --offset;
-    } while(offset && ((uint8_t)text[offset] & 0xC0) == 0x80);
-    return offset;
-}
-
-static void elements_string_trim_width(Canvas* canvas, FuriString* string, size_t width) {
-    while(canvas_string_width(canvas, furi_string_get_cstr(string)) > width) {
-        const size_t size = furi_string_size(string);
-        if(!size) break;
-        furi_string_left(string, elements_utf8_previous(furi_string_get_cstr(string), size));
-    }
-}
-
-static void elements_prepare_text_line(
-    Canvas* canvas,
-    FuriString* line,
-    size_t width,
-    size_t scroll,
-    bool ellipsis) {
-    if(canvas_string_width(canvas, furi_string_get_cstr(line)) <= width) return;
-
-    const size_t dots_width = ellipsis ? canvas_string_width(canvas, "...") : 0;
-    const size_t text_width = width > dots_width ? width - dots_width : 0;
-    if(scroll) {
-        const char* text = furi_string_get_cstr(line);
-        size_t scroll_size = 0;
-        for(size_t i = 0; text[i]; i += elements_utf8_next(text + i)) {
-            ++scroll_size;
-        }
-        size_t end = furi_string_size(line);
-        while(end) {
-            end = elements_utf8_previous(text, end);
-            if(canvas_string_width(canvas, text + end) > text_width) break;
-            --scroll_size;
-        }
-        if(scroll_size) {
-            scroll %= scroll_size + 3;
-            size_t offset = 0;
-            while(scroll && text[offset]) {
-                offset += elements_utf8_next(text + offset);
-                --scroll;
-            }
-            furi_string_right(line, offset);
-        }
-    }
-
-    elements_string_trim_width(canvas, line, text_width);
-    if(ellipsis) {
-        furi_string_cat_str(line, "...");
-        elements_string_trim_width(canvas, line, width);
-    }
-}
-
 void elements_string_fit_width(Canvas* canvas, FuriString* string, size_t width) {
     furi_check(canvas);
     furi_check(string);
 
-    elements_prepare_text_line(canvas, string, width, 0, true);
+    size_t len_px = canvas_string_width(canvas, furi_string_get_cstr(string));
+    if(len_px > width) {
+        width -= canvas_string_width(canvas, "...");
+        do {
+            furi_string_left(string, furi_string_size(string) - 1);
+            len_px = canvas_string_width(canvas, furi_string_get_cstr(string));
+        } while(len_px > width);
+        furi_string_cat(string, "...");
+    }
 }
 
 void elements_scrollable_text_line_str(
@@ -735,11 +688,43 @@ void elements_scrollable_text_line_str(
     bool centered) {
     FuriString* line = furi_string_alloc_set_str(string);
 
-    if(centered && canvas_string_width(canvas, string) > width) {
-        centered = false;
-        x -= width / 2;
+    size_t len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+    if(len_px > width) {
+        if(centered) {
+            centered = false;
+            x -= width / 2;
+        }
+
+        if(ellipsis) {
+            width -= canvas_string_width(canvas, "...");
+        }
+
+        // Calculate scroll size
+        size_t scroll_size = furi_string_size(line);
+        size_t right_width = 0;
+        for(size_t i = scroll_size - 1; i > 0; i--) {
+            right_width += canvas_glyph_width(canvas, furi_string_get_char(line, i));
+            if(right_width > width) break;
+            scroll_size--;
+            if(!scroll_size) break;
+        }
+        // Ensure that we have something to scroll
+        if(scroll_size) {
+            scroll_size += 3;
+            scroll = scroll % scroll_size;
+            furi_string_right(line, scroll);
+        }
+
+        len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+        while(len_px > width) {
+            furi_string_left(line, furi_string_size(line) - 1);
+            len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+        }
+
+        if(ellipsis) {
+            furi_string_cat(line, "...");
+        }
     }
-    elements_prepare_text_line(canvas, line, width, scroll, ellipsis);
 
     if(centered) {
         canvas_draw_str_aligned(
@@ -763,7 +748,38 @@ void elements_scrollable_text_line(
 
     FuriString* line = furi_string_alloc_set(string);
 
-    elements_prepare_text_line(canvas, line, width, scroll, ellipsis);
+    size_t len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+    if(len_px > width) {
+        if(ellipsis) {
+            width -= canvas_string_width(canvas, "...");
+        }
+
+        // Calculate scroll size
+        size_t scroll_size = furi_string_size(line);
+        size_t right_width = 0;
+        for(size_t i = scroll_size; i > 0; i--) {
+            right_width += canvas_glyph_width(canvas, furi_string_get_char(line, i));
+            if(right_width > width) break;
+            scroll_size--;
+            if(!scroll_size) break;
+        }
+        // Ensure that we have something to scroll
+        if(scroll_size) {
+            scroll_size += 3;
+            scroll = scroll % scroll_size;
+            furi_string_right(line, scroll);
+        }
+
+        len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+        while(len_px > width) {
+            furi_string_left(line, furi_string_size(line) - 1);
+            len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
+        }
+
+        if(ellipsis) {
+            furi_string_cat(line, "...");
+        }
+    }
 
     canvas_draw_str(canvas, x, y, furi_string_get_cstr(line));
     furi_string_free(line);

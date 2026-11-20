@@ -245,3 +245,87 @@ Max butthurt: 13
 Min level: 1
 Max level: 3
 Weight: 4
+
+Name: L1_Reze_Flower_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Notebook_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_CafeTray_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Rain_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_CityLights_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Classroom_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_GreenEyes_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_HandFace_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Pointing_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Pool_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_RedFlower_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255
+
+Name: L1_Reze_Window_128x64
+Min butthurt: 0
+Max butthurt: 14
+Min level: 1
+Max level: 3
+Weight: 255

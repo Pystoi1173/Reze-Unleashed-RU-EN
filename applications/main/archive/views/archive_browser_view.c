@@ -10,19 +10,22 @@
 #define SCROLL_INTERVAL (333)
 #define SCROLL_DELAY    (2)
 
-static const char* ArchiveTabNames[] = {
-    [ArchiveTabFavorites] = "Favorites",
-    [ArchiveTabIButton] = "iButton",
-    [ArchiveTabNFC] = "NFC",
-    [ArchiveTabSubGhz] = "Sub-GHz",
-    [ArchiveTabSubGhzRemote] = "SubRem",
-    [ArchiveTabLFRFID] = "RFID LF",
-    [ArchiveTabInfrared] = "Infrared",
-    [ArchiveTabBadUsb] = "Bad USB",
-    [ArchiveTabU2f] = "U2F",
-    [ArchiveTabApplications] = "Apps",
-    [ArchiveTabInternal] = "Internal",
-    [ArchiveTabBrowser] = "Browser",
+static const struct {
+    const char* english;
+    const char* russian;
+} ArchiveTabNames[] = {
+    [ArchiveTabFavorites] = {"Favorites", "Избр."},
+    [ArchiveTabIButton] = {"iButton", "iButton"},
+    [ArchiveTabNFC] = {"NFC", "NFC"},
+    [ArchiveTabSubGhz] = {"Sub-GHz", "Суб-ГГц"},
+    [ArchiveTabSubGhzRemote] = {"SubRem", "Пульт"},
+    [ArchiveTabLFRFID] = {"RFID LF", "RFID LF"},
+    [ArchiveTabInfrared] = {"Infrared", "ИК"},
+    [ArchiveTabBadUsb] = {"Bad USB", "Bad USB"},
+    [ArchiveTabU2f] = {"U2F", "U2F"},
+    [ArchiveTabApplications] = {"Apps", "Прил."},
+    [ArchiveTabInternal] = {"Internal", "Внутр."},
+    [ArchiveTabBrowser] = {"Browser", "Обзор"},
 };
 
 static const Icon* ArchiveItemIcons[] = {
@@ -399,7 +402,8 @@ static void draw_list(Canvas* canvas, ArchiveBrowserViewModel* model) {
 static void archive_render_status_bar(Canvas* canvas, ArchiveBrowserViewModel* model) {
     furi_assert(model);
 
-    const char* tab_name = ArchiveTabNames[model->tab_idx];
+    const char* tab_name = locale_translate(
+        ArchiveTabNames[model->tab_idx].english, ArchiveTabNames[model->tab_idx].russian);
     bool clip = model->clipboard_mode != CLIPBOARD_MODE_OFF;
 
     canvas_draw_icon(canvas, 0, 0, &I_Background_128x11);

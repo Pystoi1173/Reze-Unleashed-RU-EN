@@ -1,7 +1,7 @@
 App(
     appid="user_guide",
     name="User Guide",
-    apptype=FlipperAppType.EXTSETTINGS,
+    apptype=FlipperAppType.SETTINGS,
     entry_point="user_guide_app",
     requires=[
         "gui",
@@ -12,6 +12,4 @@ App(
     ],
     stack_size=1 * 1024,
     order=35,
-    fap_libs=["assets"],
-    fap_category="assets",
 )

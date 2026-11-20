@@ -1,11 +1,9 @@
 App(
     appid="system_settings",
     name="System",
-    apptype=FlipperAppType.EXTSETTINGS,
+    apptype=FlipperAppType.SETTINGS,
     entry_point="system_settings_app",
     requires=["gui", "locale"],
     stack_size=1 * 1024,
     order=30,
-    fap_libs=["assets"],
-    fap_category="assets",
 )
