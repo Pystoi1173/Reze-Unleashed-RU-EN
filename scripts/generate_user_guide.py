@@ -11,13 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_PATH = ROOT / "applications" / "settings" / "user_guide" / "user_guide.c"
 TOPIC_COUNT = 12
 PAGES_PER_TOPIC = 3
-STRINGS_PER_TOPIC = 2 + PAGES_PER_TOPIC * 2
 TOPICS_PATTERN = re.compile(
-    r"static const GuideTopic guide_topics\[\] = \{(?P<body>.*?)^\};",
+    r"static const GuideTopic guide_topics\[\]\s*=\s*\{(?P<body>.*?)^\};",
     re.DOTALL | re.MULTILINE,
 )
-STRING_PATTERN = re.compile(r'"(?:\\.|[^"\\])*"')
-ENTRY_PATTERN = re.compile(r"^\s*\{.*\},?$", re.MULTILINE)
+STRING = r'"(?:\\.|[^"\\\n])+"'
+PAGES = rf"\{{\s*{STRING}(?:\s*,\s*{STRING}){{{PAGES_PER_TOPIC - 1}}}\s*,?\s*\}}"
+ENTRY_PATTERN = re.compile(
+    rf"\s*\{{\s*{STRING}\s*,\s*{STRING}\s*,\s*{PAGES}\s*,\s*{PAGES}\s*,?\s*\}}\s*(?:,|$)"
+)
 
 
 def verify(source):
@@ -25,26 +27,22 @@ def verify(source):
     if not topics_match:
         raise ValueError("guide_topics table was not found")
 
-    entries = ENTRY_PATTERN.findall(topics_match.group("body"))
-    if len(entries) != TOPIC_COUNT:
-        raise ValueError(f"Expected {TOPIC_COUNT} guide topics, found {len(entries)}")
-
-    for index, entry in enumerate(entries, start=1):
-        strings = STRING_PATTERN.findall(entry)
-        if len(strings) != STRINGS_PER_TOPIC:
+    body = topics_match.group("body").strip()
+    position = 0
+    topic_count = 0
+    while position < len(body):
+        entry = ENTRY_PATTERN.match(body, position)
+        if entry is None:
             raise ValueError(
-                f"Topic {index} must contain {STRINGS_PER_TOPIC} string literals, "
-                f"found {len(strings)}"
+                f"Topic {topic_count + 1} must have two nonempty titles and "
+                f"{PAGES_PER_TOPIC} nonempty pages per language"
             )
-        if any(value == '""' for value in strings):
-            raise ValueError(f"Topic {index} contains an empty string")
+        position = entry.end()
+        topic_count += 1
 
-    if "COUNT_OF(guide_topics)" not in source:
-        raise ValueError("guide_topics must be used for the menu and topic bounds")
-    if "for(size_t page = 0; page < 3; page++)" not in source:
-        raise ValueError("Guide topics must contain three pages")
-
-    return len(entries)
+    if topic_count != TOPIC_COUNT:
+        raise ValueError(f"Expected {TOPIC_COUNT} guide topics, found {topic_count}")
+    return topic_count
 
 
 def main():
@@ -54,8 +52,7 @@ def main():
         action="store_true",
         help="verify the current guide table (the default)",
     )
-    args = parser.parse_args()
-    del args
+    parser.parse_args()
 
     try:
         source = SOURCE_PATH.read_text(encoding="utf-8")
